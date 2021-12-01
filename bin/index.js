@@ -28,6 +28,7 @@ const figlet_1 = __importDefault(require("figlet"));
 const chalk_1 = __importDefault(require("chalk"));
 const yargs_1 = __importDefault(require("yargs"));
 const analyzer = __importStar(require("./lib/analyzer"));
+const regions_1 = require("./lib/constants/regions");
 (0, clear_1.default)();
 console.log(chalk_1.default.yellow(figlet_1.default.textSync('EC2 Analyzer', { horizontalLayout: 'full' })));
 function processArgs() {
@@ -49,7 +50,7 @@ function processArgs() {
     })
         .default('profile', 'default')
         .describe('profile', 'AWS profile to use')
-        .usage('Usage: $0 --profile [profile] --regions [...regions]')
+        .usage('Usage: perusec2 --profile [profile] --regions [...regions]')
         .help('h')
         .alias('h', 'help')
         .argv;
@@ -61,8 +62,18 @@ async function run() {
         console.log(chalk_1.default.red('No profile provided'));
     }
     console.log(args.regions);
+    let _regions = regions_1.regions;
+    ///If regions are provided 
+    ///filter out unwanted/wrong regions 
+    if (args.regions) {
+        _regions = _regions
+            .map(r => r.toLowerCase())
+            .filter((r) => {
+            regions_1.regions.includes(r);
+        });
+    }
     //Run analyzer
-    analyzer.analyze(args.profile, args.refreshcache);
+    analyzer.analyze(args.profile, _regions, args.refreshcache);
     console.log(chalk_1.default.green(`Using profile: ${args.profile}`));
 }
 run();

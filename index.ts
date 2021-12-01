@@ -34,7 +34,7 @@ function processArgs() {
         })
         .default('profile', 'default')
         .describe('profile', 'AWS profile to use')
-        .usage('Usage: $0 --profile [profile] --regions [...regions]')
+        .usage('Usage: perusec2 --profile [profile] --regions [...regions]')
         .help('h')
         .alias('h', 'help')
         .argv;

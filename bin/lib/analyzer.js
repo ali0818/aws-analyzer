@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyze = void 0;
 const chalk_1 = __importDefault(require("chalk"));
-const regions_1 = require("./constants/regions");
 const ec2_service_1 = require("./ec2.service");
 const files_1 = require("./files");
 const utils_1 = require("./utils/utils");
@@ -16,8 +15,8 @@ const CACHE_FILE_NAME = "ec2-data.json";
  * @param refreshCache if true, will refresh the cache, else use the cache for the given profile
  *
  */
-const analyze = async (profile, refreshCache) => {
-    const { clients, toArray } = initializeRegionalClients(profile, regions_1.regions);
+const analyze = async (profile, regions, refreshCache) => {
+    const { clients, toArray } = initializeRegionalClients(profile, regions);
     let regionEC2DetailsMap = {};
     let _cacheExists = await (0, files_1.cacheExists)(CACHE_FILE_NAME, profile);
     // if cache exists and refreshCache is false, use cache
@@ -27,6 +26,7 @@ const analyze = async (profile, refreshCache) => {
         regionEC2DetailsMap = Object.assign(Object.assign({}, cache), { instanceIDSecurityGroupsMap: cache.instanceIDSecurityGroupsMap });
     }
     else {
+        //Else fetch data from all regions
         console.log(chalk_1.default.yellow("Refreshing Data..."));
         for (let i = 0; i < clients.length; i++) {
             const client = clients[i];
@@ -47,12 +47,18 @@ const analyze = async (profile, refreshCache) => {
         await (0, files_1.saveCache)(CACHE_FILE_NAME, regionEC2DetailsMap, profile);
         console.log(chalk_1.default.yellow(`Saved EC2 data to cache`));
     }
+    let analyzedRegionalData = {};
     Object.keys(regionEC2DetailsMap)
         .forEach(region => {
         _analyzeRegionData(region, regionEC2DetailsMap[region]);
     });
 };
 exports.analyze = analyze;
+/**
+ * Analyze one particular region
+ * @param region
+ * @param regionDetailsMap
+ */
 const _analyzeRegionData = (region, regionDetailsMap) => {
     const { instances, reservations, VPCs, instanceIDSecurityGroupsMap } = regionDetailsMap;
     console.log(chalk_1.default.cyan(`Analyzing EC2 data for region - `), chalk_1.default.bgGray(`${region}`));
@@ -62,8 +68,9 @@ const _analyzeRegionData = (region, regionDetailsMap) => {
         let instance = instances[i];
         console.log(chalk_1.default.cyan(`Instance ${instance.InstanceId} has ${instance.SecurityGroups.length} security group(s)`));
         let SGs = instanceIDSecurityGroupsMap[instance.InstanceId];
-        _analyzeSecurityGroups(SGs);
+        let { portSecurityGroupsMap } = _analyzeSecurityGroups(SGs);
     }
+    //Analyze VPCs found in the region
     for (let i = 0; i < VPCs.length; i++) {
         let vpc = VPCs[i];
         if (!vpc.FlowLogs || vpc.FlowLogs.length === 0) {
@@ -73,11 +80,14 @@ const _analyzeRegionData = (region, regionDetailsMap) => {
     }
     console.log('\n');
 };
+//Analylze security groups
 const _analyzeSecurityGroups = (SGs) => {
+    //Map of all security groups for a port
     let portSGsMap = {};
+    let totalOpenPotentialThreatPorts = [];
     for (let i = 0; i < SGs.length; i++) {
         let sg = SGs[i];
-        const { managedPorts } = _analyzeSecurityGroup(sg);
+        const { managedPorts, openPotentialThreatPorts } = _analyzeSecurityGroup(sg);
         if (managedPorts.length > 0) {
             managedPorts.forEach(port => {
                 if (!portSGsMap[port]) {
@@ -86,6 +96,7 @@ const _analyzeSecurityGroups = (SGs) => {
                 portSGsMap[port].push(sg);
             });
         }
+        totalOpenPotentialThreatPorts = totalOpenPotentialThreatPorts.concat(openPotentialThreatPorts);
     }
     Object.keys(portSGsMap)
         .forEach(port => {
@@ -98,10 +109,19 @@ const _analyzeSecurityGroups = (SGs) => {
             });
         }
     });
+    return {
+        portSecurityGroupsMap: portSGsMap
+    };
 };
+/**
+ * Analyze a single security group
+ * @param sg Security group to analyze
+ * @returns
+ */
 const _analyzeSecurityGroup = (sg) => {
     //List of ports managed by the security group
     let managedPorts = [];
+    let openPotentialThreatPorts = [];
     //Check for all the incoming ports
     for (let i = 0; i < sg.IpPermissions.length; i++) {
         let ipPermission = sg.IpPermissions[i];
@@ -124,12 +144,19 @@ const _analyzeSecurityGroup = (sg) => {
                 potentialThreatPorts.filter((x) => (0, utils_1.isBetweenNumbers)(x, fromPort, toPort)).length > 0;
         if (allPortsOpen && isPotentialThreat) {
             console.log(chalk_1.default.red(`Security Group ${sg.GroupName} has ${isOnePort ? 'port' : 'ports'} ${fromPort}-${toPort} open to the world`));
+            if (isOnePort) {
+                openPotentialThreatPorts.push(fromPort);
+            }
+            else {
+                openPotentialThreatPorts.push(`${fromPort}-${toPort}`);
+            }
         }
         if (isOnePort) {
             //If one port is open, add it to the list of managed ports
             managedPorts.push(`${fromPort}`);
         }
         else {
+            ///NOTE: This is not a perfect check, but let's revisit is later
             /// if it is a range of ports, add all the ports to the list of managed ports
             // managedPorts.push(
             //     ...Array(toPort - fromPort + 1).fill(0).map((_, idx) => fromPort + idx)
@@ -137,7 +164,10 @@ const _analyzeSecurityGroup = (sg) => {
             managedPorts.push(`${fromPort} - ${toPort}`);
         }
     }
-    return { managedPorts };
+    return {
+        managedPorts: managedPorts,
+        openPotentialThreatPorts: openPotentialThreatPorts
+    };
 };
 /**
  * Creates multiple instances of EC2Service with different regions
