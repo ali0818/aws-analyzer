@@ -33,10 +33,15 @@ console.log(chalk_1.default.yellow(figlet_1.default.textSync('EC2 Analyzer', { h
 function processArgs() {
     const args = (0, yargs_1.default)(process.argv.slice(2))
         .demandOption(['profile'])
+        .option('regions', {
+        alias: 'r',
+        describe: 'Regions to analyze',
+        type: 'array',
+    })
         .option('refreshcache', {
         demandOption: false,
         default: false,
-        alias: 'r',
+        alias: 'C',
         describe: 'Refresh cache',
         type: 'boolean',
         boolean: true,
@@ -44,7 +49,7 @@ function processArgs() {
     })
         .default('profile', 'default')
         .describe('profile', 'AWS profile to use')
-        .usage('Usage: $0 --profile [profile]')
+        .usage('Usage: $0 --profile [profile] --regions [...regions]')
         .help('h')
         .alias('h', 'help')
         .argv;
@@ -55,6 +60,7 @@ async function run() {
     if (!args.profile) {
         console.log(chalk_1.default.red('No profile provided'));
     }
+    console.log(args.regions);
     //Run analyzer
     analyzer.analyze(args.profile, args.refreshcache);
     console.log(chalk_1.default.green(`Using profile: ${args.profile}`));

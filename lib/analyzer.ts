@@ -1,10 +1,7 @@
 import {
-    Instance, Reservation, SecurityGroup,
-    DescribeFlowLogsCommand, DescribeFlowLogsCommandInput,
-    DescribeFlowLogsCommandOutput
+    Instance, Reservation, SecurityGroup
 } from "@aws-sdk/client-ec2";
 import chalk from "chalk";
-import { regions } from "./constants/regions";
 import { EC2Service, ManagedVPC } from "./ec2.service";
 import { cacheExists, loadCache, saveCache } from "./files";
 import { isBetweenNumbers } from "./utils/utils";
@@ -17,7 +14,7 @@ const CACHE_FILE_NAME = "ec2-data.json";
  * @param refreshCache if true, will refresh the cache, else use the cache for the given profile
  * 
  */
-export const analyze = async (profile: string, refreshCache: boolean) => {
+export const analyze = async (profile: string, regions: string[], refreshCache: boolean) => {
     const { clients, toArray } = initializeRegionalClients(profile, regions);
 
     let regionEC2DetailsMap: {
@@ -41,18 +38,21 @@ export const analyze = async (profile: string, refreshCache: boolean) => {
         };
     }
     else {
+        //Else fetch data from all regions
         console.log(chalk.yellow("Refreshing Data..."));
 
         for (let i = 0; i < clients.length; i++) {
             const client = clients[i];
             try {
                 let { instances, reservations, instanceIdSecurityGroupsMap, VPCs } = await client.getAllInstances();
+
                 regionEC2DetailsMap[client.region] = {
                     instances,
                     reservations,
                     instanceIDSecurityGroupsMap: Object.fromEntries(instanceIdSecurityGroupsMap),
                     VPCs
                 };
+
             } catch (error) {
                 console.log(chalk.red(error));
             }
@@ -63,12 +63,19 @@ export const analyze = async (profile: string, refreshCache: boolean) => {
         console.log(chalk.yellow(`Saved EC2 data to cache`));
     }
 
+    let analyzedRegionalData = {};
+
     Object.keys(regionEC2DetailsMap)
         .forEach(region => {
             _analyzeRegionData(region, regionEC2DetailsMap[region]);
         });
 }
 
+/**
+ * Analyze one particular region
+ * @param region 
+ * @param regionDetailsMap 
+ */
 const _analyzeRegionData = (region: string,
     regionDetailsMap: {
         instances: Instance[];
@@ -77,19 +84,20 @@ const _analyzeRegionData = (region: string,
         instanceIDSecurityGroupsMap: { [instanceId: string]: SecurityGroup[] }
     }) => {
     const { instances, reservations, VPCs, instanceIDSecurityGroupsMap } = regionDetailsMap;
+
     console.log(chalk.cyan(`Analyzing EC2 data for region - `), chalk.bgGray(`${region}`));
     console.log(chalk.yellow(`Found ${instances.length} instance(s)`));
     console.log(chalk.yellow(`Found ${VPCs.length} VPC(s)`));
-
 
     for (let i = 0; i < instances.length; i++) {
         let instance = instances[i];
         console.log(chalk.cyan(`Instance ${instance.InstanceId} has ${instance.SecurityGroups.length} security group(s)`));
         let SGs = instanceIDSecurityGroupsMap[instance.InstanceId];
 
-        _analyzeSecurityGroups(SGs);
+        let { portSecurityGroupsMap } = _analyzeSecurityGroups(SGs);
     }
 
+    //Analyze VPCs found in the region
     for (let i = 0; i < VPCs.length; i++) {
         let vpc = VPCs[i];
 
@@ -102,13 +110,15 @@ const _analyzeRegionData = (region: string,
     console.log('\n');
 }
 
+//Analylze security groups
 const _analyzeSecurityGroups = (SGs: SecurityGroup[]) => {
 
+    //Map of all security groups for a port
     let portSGsMap = {};
-
+    let totalOpenPotentialThreatPorts = [];
     for (let i = 0; i < SGs.length; i++) {
         let sg = SGs[i];
-        const { managedPorts } = _analyzeSecurityGroup(sg);
+        const { managedPorts, openPotentialThreatPorts } = _analyzeSecurityGroup(sg);
 
         if (managedPorts.length > 0) {
             managedPorts.forEach(port => {
@@ -118,6 +128,8 @@ const _analyzeSecurityGroups = (SGs: SecurityGroup[]) => {
                 portSGsMap[port].push(sg);
             });
         }
+
+        totalOpenPotentialThreatPorts = totalOpenPotentialThreatPorts.concat(openPotentialThreatPorts);
     }
 
     Object.keys(portSGsMap)
@@ -132,12 +144,20 @@ const _analyzeSecurityGroups = (SGs: SecurityGroup[]) => {
             }
         });
 
+    return {
+        portSecurityGroupsMap: portSGsMap
+    }
 }
 
-
+/**
+ * Analyze a single security group
+ * @param sg Security group to analyze
+ * @returns 
+ */
 const _analyzeSecurityGroup = (sg: SecurityGroup) => {
     //List of ports managed by the security group
     let managedPorts = [];
+    let openPotentialThreatPorts = [];
     //Check for all the incoming ports
     for (let i = 0; i < sg.IpPermissions.length; i++) {
         let ipPermission = sg.IpPermissions[i];
@@ -148,6 +168,7 @@ const _analyzeSecurityGroup = (sg: SecurityGroup) => {
         const allPortsOpen = ipPermission
             .IpRanges
             .map(c => c.CidrIp).includes('0.0.0.0/0')
+
 
         //Check if the ports are in one of the following ranges
         //@credit https://secbot.com/docs/ports/common-ports
@@ -164,6 +185,12 @@ const _analyzeSecurityGroup = (sg: SecurityGroup) => {
 
         if (allPortsOpen && isPotentialThreat) {
             console.log(chalk.red(`Security Group ${sg.GroupName} has ${isOnePort ? 'port' : 'ports'} ${fromPort}-${toPort} open to the world`));
+
+            if (isOnePort) {
+                openPotentialThreatPorts.push(fromPort);
+            } else {
+                openPotentialThreatPorts.push(`${fromPort}-${toPort}`);
+            }
         }
 
         if (isOnePort) {
@@ -171,6 +198,7 @@ const _analyzeSecurityGroup = (sg: SecurityGroup) => {
             managedPorts.push(`${fromPort}`);
         }
         else {
+            ///NOTE: This is not a perfect check, but let's revisit is later
             /// if it is a range of ports, add all the ports to the list of managed ports
             // managedPorts.push(
             //     ...Array(toPort - fromPort + 1).fill(0).map((_, idx) => fromPort + idx)
@@ -179,7 +207,10 @@ const _analyzeSecurityGroup = (sg: SecurityGroup) => {
         }
     }
 
-    return { managedPorts }
+    return {
+        managedPorts: managedPorts,
+        openPotentialThreatPorts: openPotentialThreatPorts
+    };
 }
 
 /**
