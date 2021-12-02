@@ -33,8 +33,7 @@ export const analyze = async (profile: string, regions: string[], refreshCache: 
         console.log(chalk.yellow("Cache found, Using cached data"));
         const cache = await loadCache(CACHE_FILE_NAME, profile);
         regionEC2DetailsMap = {
-            ...cache,
-            instanceIDSecurityGroupsMap: cache.instanceIDSecurityGroupsMap
+            ...cache
         };
     }
     else {

@@ -1,6 +1,6 @@
 {
   "name": "ec2-analyzer",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Analyze EC2 instances from all regions",
   "main": "index.js",
   "bin": {
