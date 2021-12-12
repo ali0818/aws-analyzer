@@ -8,6 +8,8 @@ import * as analyzer from './lib/analyzer';
 import { regions } from './lib/constants/regions';
 import { analyzeResources } from './lib/resource-analyzer';
 
+export const CACHE_DIR = 'aws-resources-cache';
+
 clear();
 console.log(
     chalk.yellow(
@@ -19,6 +21,11 @@ const baseArgs = () => {
     return yargs
         .demandOption('profile')
         .options({
+            cachedir: {
+                alias: 'c',
+                describe: 'Directory to cache data',
+                default: './cache'
+            },
             profile: {
                 alias: 'p',
                 describe: 'AWS profile to use',
@@ -47,7 +54,7 @@ function processArgs() {
                 console.log("RUNNING RESOURCES");
                 runResources(argv);
             })
-        .usage('Usage: perusec2 --profile [profile] --regions [...regions]')
+        .usage('Usage: aws-manager <ec2>|<resources> --profile [profile] --regions [...regions]')
         .help('h')
         .alias('h', 'help')
         .argv;
@@ -62,7 +69,7 @@ export async function runResources(args) {
         const _regions = await _processRegions(args);
         console.log(chalk.yellow(`Analyzing resources in regions: ${_regions}`));
         //Run resource analyzer
-        let data = await analyzeResources(args.profile, _regions, args.refreshcache);
+        let data = await analyzeResources(args.profile, _regions, args.refreshcache, args.cachedir);
 
         return data;
     } catch (err) {

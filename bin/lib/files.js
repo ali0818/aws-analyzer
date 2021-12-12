@@ -7,7 +7,7 @@ exports.loadCache = exports.cacheExists = exports.saveCache = exports.directoryE
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const chalk_1 = __importDefault(require("chalk"));
-const CACHE_DIR = 'cache';
+const __1 = require("..");
 const getCurrentDirectoryBase = () => {
     return "./";
     return path_1.default.basename(process.cwd());
@@ -17,13 +17,13 @@ const directoryExists = (filePath) => {
     return fs_1.default.existsSync(filePath);
 };
 exports.directoryExists = directoryExists;
-const saveCache = async (filename, data, profile = 'default') => {
+const saveCache = async (filename, data, profile = 'default', cachedir = __1.CACHE_DIR) => {
     try {
         const baseDir = (0, exports.getCurrentDirectoryBase)();
-        if (!(0, exports.directoryExists)(path_1.default.resolve(baseDir, `${CACHE_DIR}/${profile}`))) {
-            fs_1.default.mkdirSync(`${CACHE_DIR}/${profile}`, { recursive: true });
+        if (!(0, exports.directoryExists)(path_1.default.resolve(baseDir, `${cachedir}/${profile}`))) {
+            fs_1.default.mkdirSync(`${cachedir}/${profile}`, { recursive: true });
         }
-        const filePath = path_1.default.join(baseDir, CACHE_DIR, profile, filename);
+        const filePath = path_1.default.join(baseDir, cachedir, profile, filename);
         console.log(chalk_1.default.green(`Saving cache to ${filePath}`));
         await fs_1.default.promises.writeFile(filePath, JSON.stringify(data));
     }
@@ -32,10 +32,10 @@ const saveCache = async (filename, data, profile = 'default') => {
     }
 };
 exports.saveCache = saveCache;
-const cacheExists = async (filename, profile = 'default') => {
+const cacheExists = async (filename, profile = 'default', cacheDir = __1.CACHE_DIR) => {
     try {
         const baseDir = (0, exports.getCurrentDirectoryBase)();
-        const filePath = path_1.default.join(baseDir, CACHE_DIR, profile, filename);
+        const filePath = path_1.default.join(baseDir, cacheDir, profile, filename);
         return (0, exports.directoryExists)(filePath);
     }
     catch (error) {
@@ -44,10 +44,10 @@ const cacheExists = async (filename, profile = 'default') => {
     }
 };
 exports.cacheExists = cacheExists;
-const loadCache = async (filename, profile = 'default') => {
+const loadCache = async (filename, profile = 'default', cacheDir = __1.CACHE_DIR) => {
     try {
         const baseDir = (0, exports.getCurrentDirectoryBase)();
-        const filePath = path_1.default.join(baseDir, CACHE_DIR, profile, filename);
+        const filePath = path_1.default.join(baseDir, cacheDir, profile, filename);
         const data = await fs_1.default.promises.readFile(filePath);
         return JSON.parse(data.toString());
     }

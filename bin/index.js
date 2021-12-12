@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runEC2 = exports.runResources = void 0;
+exports.runEC2 = exports.runResources = exports.CACHE_DIR = void 0;
 const clear_1 = __importDefault(require("clear"));
 const figlet_1 = __importDefault(require("figlet"));
 const chalk_1 = __importDefault(require("chalk"));
@@ -31,12 +31,18 @@ const yargs_1 = __importDefault(require("yargs"));
 const analyzer = __importStar(require("./lib/analyzer"));
 const regions_1 = require("./lib/constants/regions");
 const resource_analyzer_1 = require("./lib/resource-analyzer");
+exports.CACHE_DIR = 'aws-resources-cache';
 (0, clear_1.default)();
 console.log(chalk_1.default.yellow(figlet_1.default.textSync('EC2 Analyzer', { horizontalLayout: 'full' })));
 const baseArgs = () => {
     return yargs_1.default
         .demandOption('profile')
         .options({
+        cachedir: {
+            alias: 'c',
+            describe: 'Directory to cache data',
+            default: './cache'
+        },
         profile: {
             alias: 'p',
             describe: 'AWS profile to use',
@@ -62,7 +68,7 @@ function processArgs() {
         console.log("RUNNING RESOURCES");
         runResources(argv);
     })
-        .usage('Usage: perusec2 --profile [profile] --regions [...regions]')
+        .usage('Usage: aws-manager <ec2>|<resources> --profile [profile] --regions [...regions]')
         .help('h')
         .alias('h', 'help')
         .argv;
@@ -74,7 +80,7 @@ async function runResources(args) {
         const _regions = await _processRegions(args);
         console.log(chalk_1.default.yellow(`Analyzing resources in regions: ${_regions}`));
         //Run resource analyzer
-        let data = await (0, resource_analyzer_1.analyzeResources)(args.profile, _regions, args.refreshcache);
+        let data = await (0, resource_analyzer_1.analyzeResources)(args.profile, _regions, args.refreshcache, args.cachedir);
         return data;
     }
     catch (err) {

@@ -21,7 +21,7 @@ type ResourceRegexMatchResult = {
     resourceId: string
 }
 
-export async function analyzeResources(profile: string, regions: string[], refreshCache: boolean) {
+export async function analyzeResources(profile: string, regions: string[], refreshCache: boolean, cacheDir: string) {
     const iamClient = new IamService(profile);
 
     try {
@@ -35,8 +35,8 @@ export async function analyzeResources(profile: string, regions: string[], refre
         if (_treeCacheExists && _cacheExists && !refreshCache) {
             console.log(chalk.yellow('Using cached data'));
 
-            const cache = await loadCache(CACHE_FILE_NAME, profile);
-            const treeCache = await loadCache(TREE_CACHE_FILE_NAME, profile);
+            const cache = await loadCache(CACHE_FILE_NAME, profile, cacheDir);
+            const treeCache = await loadCache(TREE_CACHE_FILE_NAME, profile, cacheDir);
             details = cache;
             treeDetails = treeCache;
 
@@ -54,14 +54,14 @@ export async function analyzeResources(profile: string, regions: string[], refre
             }
             console.log(chalk.green('Got all the resources'));
 
-            console.log(chalk.underline.green(`Therer are total {${totalResources.length}} resources in all the regions`));
+            console.log(chalk.underline.green(`There are total {${totalResources.length}} resources in all the regions`));
 
-            await saveCache(CACHE_FILE_NAME, details, profile);
+            await saveCache(CACHE_FILE_NAME, details, profile, cacheDir);
             console.log(chalk.yellow('Saved Policies data to cache'));
 
             const mainTree = await analyzeResourceAndPolicies(policies, profile, regions);
 
-            await saveCache(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile);
+            await saveCache(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile, cacheDir);
         }
 
         return {

@@ -16,7 +16,7 @@ const resourcegroupstagging_service_1 = require("./resourcegroupstagging.service
 const graph_1 = require("./utils/graph");
 const CACHE_FILE_NAME = 'resource-cache.json';
 const TREE_CACHE_FILE_NAME = 'resource-tree-cache.json';
-async function analyzeResources(profile, regions, refreshCache) {
+async function analyzeResources(profile, regions, refreshCache, cacheDir) {
     const iamClient = new iam_service_1.IamService(profile);
     try {
         const user = await iamClient.getUser();
@@ -26,8 +26,8 @@ async function analyzeResources(profile, regions, refreshCache) {
         let treeDetails = {};
         if (_treeCacheExists && _cacheExists && !refreshCache) {
             console.log(chalk_1.default.yellow('Using cached data'));
-            const cache = await (0, files_1.loadCache)(CACHE_FILE_NAME, profile);
-            const treeCache = await (0, files_1.loadCache)(TREE_CACHE_FILE_NAME, profile);
+            const cache = await (0, files_1.loadCache)(CACHE_FILE_NAME, profile, cacheDir);
+            const treeCache = await (0, files_1.loadCache)(TREE_CACHE_FILE_NAME, profile, cacheDir);
             details = cache;
             treeDetails = treeCache;
         }
@@ -41,11 +41,11 @@ async function analyzeResources(profile, regions, refreshCache) {
                 regionResourcesMap
             };
             console.log(chalk_1.default.green('Got all the resources'));
-            console.log(chalk_1.default.underline.green(`Therer are total {${totalResources.length}} resources in all the regions`));
-            await (0, files_1.saveCache)(CACHE_FILE_NAME, details, profile);
+            console.log(chalk_1.default.underline.green(`There are total {${totalResources.length}} resources in all the regions`));
+            await (0, files_1.saveCache)(CACHE_FILE_NAME, details, profile, cacheDir);
             console.log(chalk_1.default.yellow('Saved Policies data to cache'));
             const mainTree = await analyzeResourceAndPolicies(policies, profile, regions);
-            await (0, files_1.saveCache)(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile);
+            await (0, files_1.saveCache)(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile, cacheDir);
         }
         return {
             details,
