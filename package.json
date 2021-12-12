@@ -1,10 +1,10 @@
 {
   "name": "aws-analyzer",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Analyze AWS resources from all regions",
   "main": "index.js",
   "bin": {
-    "perusec2": "bin/index.js"
+    "aws-analyzer": "bin/index.js"
   },
   "scripts": {
     "start": "npm run build:win && node ./dist/index.js",
