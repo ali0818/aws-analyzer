@@ -29,38 +29,53 @@ const chalk_1 = __importDefault(require("chalk"));
 const yargs_1 = __importDefault(require("yargs"));
 const analyzer = __importStar(require("./lib/analyzer"));
 const regions_1 = require("./lib/constants/regions");
+const resource_analyzer_1 = require("./lib/resource-analyzer");
 (0, clear_1.default)();
 console.log(chalk_1.default.yellow(figlet_1.default.textSync('EC2 Analyzer', { horizontalLayout: 'full' })));
+const baseArgs = () => {
+    return yargs_1.default
+        .demandOption('profile')
+        .options({
+        profile: {
+            alias: 'p',
+            describe: 'AWS profile to use',
+            type: 'string',
+            required: true
+        },
+        refreshcache: {
+            alias: 'r',
+            describe: 'Refresh cache',
+            type: 'boolean'
+        },
+    });
+};
 function processArgs() {
     const args = (0, yargs_1.default)(process.argv.slice(2))
-        .demandOption(['profile'])
-        .option('regions', {
-        alias: 'r',
-        describe: 'Regions to analyze',
-        type: 'array',
+        .command(['ec2', '$0'], 'analyze ec2 instances', () => { }, (argv) => {
+        console.log("RUNNING EC@");
+        runEC2(argv);
     })
-        .option('refreshcache', {
-        demandOption: false,
-        default: false,
-        alias: 'C',
-        describe: 'Refresh cache',
-        type: 'boolean',
-        boolean: true,
-        description: 'Refresh cache'
+        .command('resources', 'Analyze iam resources', () => {
+        return baseArgs();
+    }, (argv) => {
+        console.log("RUNNING RESOURCES");
+        runResources(argv);
     })
-        .default('profile', 'default')
-        .describe('profile', 'AWS profile to use')
         .usage('Usage: perusec2 --profile [profile] --regions [...regions]')
         .help('h')
         .alias('h', 'help')
         .argv;
     return args;
 }
-async function run() {
-    const args = processArgs();
-    if (!args.profile) {
-        console.log(chalk_1.default.red('No profile provided'));
-    }
+async function runResources(args) {
+    console.log(args);
+    const _regions = await _processRegions(args);
+    console.log(chalk_1.default.yellow(`Analyzing resources in regions: ${_regions}`));
+    //Run resource analyzer
+    (0, resource_analyzer_1.analyzeResources)(args.profile, _regions, args.refreshcache);
+}
+async function _processRegions(args) {
+    console.log(args);
     console.log(args.regions);
     let _regions = regions_1.regions;
     ///If regions are provided 
@@ -72,9 +87,20 @@ async function run() {
             regions_1.regions.includes(r);
         });
     }
+    return _regions;
+}
+async function runEC2(args) {
+    console.log(args);
+    if (!args.profile) {
+        console.log(chalk_1.default.red('No profile provided'));
+    }
+    const _regions = await _processRegions(args);
     //Run analyzer
     analyzer.analyze(args.profile, _regions, args.refreshcache);
     console.log(chalk_1.default.green(`Using profile: ${args.profile}`));
+}
+function run() {
+    processArgs();
 }
 run();
 //# sourceMappingURL=index.js.map

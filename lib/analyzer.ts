@@ -83,7 +83,6 @@ const _analyzeRegionData = (region: string,
         instanceIDSecurityGroupsMap: { [instanceId: string]: SecurityGroup[] }
     }) => {
     const { instances, reservations, VPCs, instanceIDSecurityGroupsMap } = regionDetailsMap;
-
     console.log(chalk.cyan(`Analyzing EC2 data for region - `), chalk.bgGray(`${region}`));
     console.log(chalk.yellow(`Found ${instances.length} instance(s)`));
     console.log(chalk.yellow(`Found ${VPCs.length} VPC(s)`));
@@ -109,12 +108,18 @@ const _analyzeRegionData = (region: string,
     console.log('\n');
 }
 
-//Analylze security groups
+/**
+ * Analyze security groups for a given instance
+ * @param SGs SecurityGroups
+ * @returns 
+ */
 const _analyzeSecurityGroups = (SGs: SecurityGroup[]) => {
 
     //Map of all security groups for a port
     let portSGsMap = {};
     let totalOpenPotentialThreatPorts = [];
+    let securityGroupOpenThreatPortsMap = {};
+    
     for (let i = 0; i < SGs.length; i++) {
         let sg = SGs[i];
         const { managedPorts, openPotentialThreatPorts } = _analyzeSecurityGroup(sg);

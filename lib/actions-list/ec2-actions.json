@@ -1,0 +1,2362 @@
+[
+    {
+        "action": "AcceptReservedInstancesExchangeQuote",
+        "desc": "Grants permission to accept a Convertible Reserved Instance exchange quote",
+        "access": "Write"
+    },
+    {
+        "action": "AcceptTransitGatewayMulticastDomainAssociations",
+        "desc": "Grants permission to accept a request to associate subnets with a transit gateway\n                                                multicast domain",
+        "access": "Write"
+    },
+    {
+        "action": "AcceptTransitGatewayPeeringAttachment",
+        "desc": "Grants permission to accept a transit gateway peering attachment request",
+        "access": "Write"
+    },
+    {
+        "action": "AcceptTransitGatewayVpcAttachment",
+        "desc": "Grants permission to accept a request to attach a VPC to a transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "AcceptVpcEndpointConnections",
+        "desc": "Grants permission to accept one or more interface VPC endpoint connections to your\n                                                VPC endpoint service",
+        "access": "Write"
+    },
+    {
+        "action": "AcceptVpcPeeringConnection",
+        "desc": "Grants permission to accept a VPC peering connection request",
+        "access": "Write"
+    },
+    {
+        "action": "AdvertiseByoipCidr",
+        "desc": "Grants permission to advertise an IP address range that is provisioned for use in\n                                                AWS through bring your own IP addresses (BYOIP)",
+        "access": "Write"
+    },
+    {
+        "action": "AllocateAddress",
+        "desc": "Grants permission to allocate an Elastic IP address (EIP) to your account",
+        "access": "Write"
+    },
+    {
+        "action": "AllocateHosts",
+        "desc": "Grants permission to allocate a Dedicated Host to your account",
+        "access": "Write"
+    },
+    {
+        "action": "ApplySecurityGroupsToClientVpnTargetNetwork",
+        "desc": "Grants permission to apply a security group to the association between a Client VPN\n                                                endpoint and a target network",
+        "access": "Write"
+    },
+    {
+        "action": "AssignIpv6Addresses",
+        "desc": "Grants permission to assign one or more IPv6 addresses to a network interface",
+        "access": "Write"
+    },
+    {
+        "action": "AssignPrivateIpAddresses",
+        "desc": "Grants permission to assign one or more secondary private IP addresses to a network\n                                                interface",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateAddress",
+        "desc": "Grants permission to associate an Elastic IP address (EIP) with an instance or a network\n                                                interface",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateClientVpnTargetNetwork",
+        "desc": "Grants permission to associate a target network with a Client VPN endpoint",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateDhcpOptions",
+        "desc": "Grants permission to associate or disassociate a set of DHCP options with a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateEnclaveCertificateIamRole",
+        "desc": "Grants permission to associate an ACM certificate with an IAM role to be used in an\n                                                EC2 Enclave",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateIamInstanceProfile",
+        "desc": "Grants permission to associate an IAM instance profile with a running or stopped instance",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateInstanceEventWindow",
+        "desc": "Grants permission to associate one or more targets with an event window",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateRouteTable",
+        "desc": "Grants permission to associate a subnet or gateway with a route table",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateSubnetCidrBlock",
+        "desc": "Grants permission to associate a CIDR block with a subnet",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateTransitGatewayMulticastDomain",
+        "desc": "Grants permission to associate an attachment and list of subnets with a transit gateway\n                                                multicast domain",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateTransitGatewayRouteTable",
+        "desc": "Grants permission to associate an attachment with a transit gateway route table",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateTrunkInterface",
+        "desc": "Grants permission to associate a branch network interface with a trunk network interface",
+        "access": "Write"
+    },
+    {
+        "action": "AssociateVpcCidrBlock",
+        "desc": "Grants permission to associate a CIDR block with a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "AttachClassicLinkVpc",
+        "desc": "Grants permission to link an EC2-Classic instance to a ClassicLink-enabled VPC through\n                                                one or more of the VPC's security groups",
+        "access": "Write"
+    },
+    {
+        "action": "AttachInternetGateway",
+        "desc": "Grants permission to attach an internet gateway to a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "AttachNetworkInterface",
+        "desc": "Grants permission to attach a network interface to an instance",
+        "access": "Write"
+    },
+    {
+        "action": "AttachVolume",
+        "desc": "Grants permission to attach an EBS volume to a running or stopped instance and expose\n                                                it to the instance with the specified device name",
+        "access": "Write"
+    },
+    {
+        "action": "AttachVpnGateway",
+        "desc": "Grants permission to attach a virtual private gateway to a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "AuthorizeClientVpnIngress",
+        "desc": "Grants permission to add an inbound authorization rule to a Client VPN endpoint",
+        "access": "Write"
+    },
+    {
+        "action": "AuthorizeSecurityGroupEgress",
+        "desc": "Grants permission to add one or more outbound rules to a VPC security group",
+        "access": "Write"
+    },
+    {
+        "action": "AuthorizeSecurityGroupIngress",
+        "desc": "Grants permission to add one or more inbound rules to a security group",
+        "access": "Write"
+    },
+    {
+        "action": "BundleInstance",
+        "desc": "Grants permission to bundle an instance store-backed Windows instance",
+        "access": "Write"
+    },
+    {
+        "action": "CancelBundleTask",
+        "desc": "Grants permission to cancel a bundling operation",
+        "access": "Write"
+    },
+    {
+        "action": "CancelCapacityReservation",
+        "desc": "Grants permission to cancel a Capacity Reservation and release the reserved capacity",
+        "access": "Write"
+    },
+    {
+        "action": "CancelCapacityReservationFleets",
+        "desc": "Grants permission to cancel one or more Capacity Reservation Fleets",
+        "access": "Write"
+    },
+    {
+        "action": "CancelConversionTask",
+        "desc": "Grants permission to cancel an active conversion task",
+        "access": "Write"
+    },
+    {
+        "action": "CancelExportTask",
+        "desc": "Grants permission to cancel an active export task",
+        "access": "Write"
+    },
+    {
+        "action": "CancelImportTask",
+        "desc": "Grants permission to cancel an in-process import virtual machine or import snapshot\n                                                task",
+        "access": "Write"
+    },
+    {
+        "action": "CancelReservedInstancesListing",
+        "desc": "Grants permission to cancel a Reserved Instance listing on the Reserved Instance Marketplace",
+        "access": "Write"
+    },
+    {
+        "action": "CancelSpotFleetRequests",
+        "desc": "Grants permission to cancel one or more Spot Fleet requests",
+        "access": "Write"
+    },
+    {
+        "action": "CancelSpotInstanceRequests",
+        "desc": "Grants permission to cancel one or more Spot Instance requests",
+        "access": "Write"
+    },
+    {
+        "action": "ConfirmProductInstance",
+        "desc": "Grants permission to determine whether an owned product code is associated with an\n                                                instance",
+        "access": "Write"
+    },
+    {
+        "action": "CopyFpgaImage",
+        "desc": "Grants permission to copy a source Amazon FPGA image (AFI) to the current Region.\n                                                Resource-level permissions specified for this action apply to the new AFI only. They\n                                                do not apply to the source AFI",
+        "access": "Write"
+    },
+    {
+        "action": "CopyImage",
+        "desc": "Grants permission to copy an Amazon Machine Image (AMI) from a source Region to the\n                                                current Region. Resource-level permissions specified for this action apply to the\n                                                new AMI only. They do not apply to the source AMI",
+        "access": "Write"
+    },
+    {
+        "action": "CopySnapshot",
+        "desc": "Grants permission to copy a point-in-time snapshot of an EBS volume and store it in\n                                                Amazon S3. Resource-level permissions specified for this action apply to the new snapshot\n                                                only. They do not apply to the source snapshot",
+        "access": "Write"
+    },
+    {
+        "action": "CreateCapacityReservation",
+        "desc": "Grants permission to create a Capacity Reservation",
+        "access": "Write"
+    },
+    {
+        "action": "CreateCapacityReservationFleet",
+        "desc": "Grants permission to create a Capacity Reservation Fleet",
+        "access": "Write"
+    },
+    {
+        "action": "CreateCarrierGateway",
+        "desc": "Grants permission to create a carrier gateway and provides CSP connectivity to VPC\n                                                customers",
+        "access": "Write"
+    },
+    {
+        "action": "CreateClientVpnEndpoint",
+        "desc": "Grants permission to create a Client VPN endpoint",
+        "access": "Write"
+    },
+    {
+        "action": "CreateClientVpnRoute",
+        "desc": "Grants permission to add a network route to a Client VPN endpoint's route table",
+        "access": "Write"
+    },
+    {
+        "action": "CreateCustomerGateway",
+        "desc": "Grants permission to create a customer gateway, which provides information to AWS\n                                                about your customer gateway device",
+        "access": "Write"
+    },
+    {
+        "action": "CreateDefaultSubnet",
+        "desc": "Grants permission to create a default subnet in a specified Availability Zone in a\n                                                default VPC",
+        "access": "Write"
+    },
+    {
+        "action": "CreateDefaultVpc",
+        "desc": "Grants permission to create a default VPC with a default subnet in each Availability\n                                                Zone",
+        "access": "Write"
+    },
+    {
+        "action": "CreateDhcpOptions",
+        "desc": "Grants permission to create a set of DHCP options for a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "CreateEgressOnlyInternetGateway",
+        "desc": "Grants permission to create an egress-only internet gateway for a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "CreateFleet",
+        "desc": "Grants permission to launch an EC2 Fleet",
+        "access": "Write"
+    },
+    {
+        "action": "CreateFlowLogs",
+        "desc": "Grants permission to create one or more flow logs to capture IP traffic for a network\n                                                interface",
+        "access": "Write"
+    },
+    {
+        "action": "CreateFpgaImage",
+        "desc": "Grants permission to create an Amazon FPGA Image (AFI) from a design checkpoint (DCP)",
+        "access": "Write"
+    },
+    {
+        "action": "CreateImage",
+        "desc": "Grants permission to create an Amazon EBS-backed AMI from a stopped or running Amazon\n                                                EBS-backed instance",
+        "access": "Write"
+    },
+    {
+        "action": "CreateInstanceEventWindow",
+        "desc": "Grants permission to create an event window in which scheduled events for the associated\n                                                Amazon EC2 instances can run",
+        "access": "Write"
+    },
+    {
+        "action": "CreateInstanceExportTask",
+        "desc": "Grants permission to export a running or stopped instance to an Amazon S3 bucket",
+        "access": "Write"
+    },
+    {
+        "action": "CreateInternetGateway",
+        "desc": "Grants permission to create an internet gateway for a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "CreateKeyPair",
+        "desc": "Grants permission to create a 2048-bit RSA key pair",
+        "access": "Write"
+    },
+    {
+        "action": "CreateLaunchTemplate",
+        "desc": "Grants permission to create a launch template",
+        "access": "Write"
+    },
+    {
+        "action": "CreateLaunchTemplateVersion",
+        "desc": "Grants permission to create a new version of a launch template",
+        "access": "Write"
+    },
+    {
+        "action": "CreateLocalGatewayRoute",
+        "desc": "Grants permission to create a static route for a local gateway route table",
+        "access": "Write"
+    },
+    {
+        "action": "CreateLocalGatewayRouteTableVpcAssociation",
+        "desc": "Grants permission to associate a VPC with a local gateway route table",
+        "access": "Write"
+    },
+    {
+        "action": "CreateManagedPrefixList",
+        "desc": "Grants permission to create a managed prefix list",
+        "access": "Write"
+    },
+    {
+        "action": "CreateNatGateway",
+        "desc": "Grants permission to create a NAT gateway in a subnet",
+        "access": "Write"
+    },
+    {
+        "action": "CreateNetworkAcl",
+        "desc": "Grants permission to create a network ACL in a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "CreateNetworkAclEntry",
+        "desc": "Grants permission to create a numbered entry (a rule) in a network ACL",
+        "access": "Write"
+    },
+    {
+        "action": "CreateNetworkInsightsPath",
+        "desc": "Grants permission to create a path to analyze for reachability",
+        "access": "Write"
+    },
+    {
+        "action": "CreateNetworkInterface",
+        "desc": "Grants permission to create a network interface in a subnet",
+        "access": "Write"
+    },
+    {
+        "action": "CreateNetworkInterfacePermission",
+        "desc": "Grants permission to create a permission for an AWS-authorized user to perform certain\n                                                operations on a network interface",
+        "access": "Permissions management"
+    },
+    {
+        "action": "CreatePlacementGroup",
+        "desc": "Grants permission to create a placement group",
+        "access": "Write"
+    },
+    {
+        "action": "CreateReplaceRootVolumeTask",
+        "desc": "Grants permission to create a root volume replacement task",
+        "access": "Write"
+    },
+    {
+        "action": "CreateReservedInstancesListing",
+        "desc": "Grants permission to create a listing for Standard Reserved Instances to be sold in\n                                                the Reserved Instance Marketplace",
+        "access": "Write"
+    },
+    {
+        "action": "CreateRestoreImageTask",
+        "desc": "Grants permission to start a task that restores an AMI from an S3 object previously\n                                                created by using CreateStoreImageTask",
+        "access": "Write"
+    },
+    {
+        "action": "CreateRoute",
+        "desc": "Grants permission to create a route in a VPC route table",
+        "access": "Write"
+    },
+    {
+        "action": "CreateRouteTable",
+        "desc": "Grants permission to create a route table for a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "CreateSecurityGroup",
+        "desc": "Grants permission to create a security group",
+        "access": "Write"
+    },
+    {
+        "action": "CreateSnapshot",
+        "desc": "Grants permission to create a snapshot of an EBS volume and store it in Amazon S3",
+        "access": "Write"
+    },
+    {
+        "action": "CreateSnapshots",
+        "desc": "Grants permission to create crash-consistent snapshots of multiple EBS volumes and\n                                                store them in Amazon S3",
+        "access": "Write"
+    },
+    {
+        "action": "CreateSpotDatafeedSubscription",
+        "desc": "Grants permission to create a data feed for Spot Instances to view Spot Instance usage\n                                                logs",
+        "access": "Write"
+    },
+    {
+        "action": "CreateStoreImageTask",
+        "desc": "Grants permission to store an AMI as a single object in an S3 bucket",
+        "access": "Write"
+    },
+    {
+        "action": "CreateSubnet",
+        "desc": "Grants permission to create a subnet in a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "CreateSubnetCidrReservation",
+        "desc": "Grants permission to create a subnet CIDR reservation",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTags",
+        "desc": "Grants permission to add or overwrite one or more tags for Amazon EC2 resources",
+        "access": "Tagging"
+    },
+    {
+        "action": "CreateTrafficMirrorFilter",
+        "desc": "Grants permission to create a traffic mirror filter",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTrafficMirrorFilterRule",
+        "desc": "Grants permission to create a traffic mirror filter rule",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTrafficMirrorSession",
+        "desc": "Grants permission to create a traffic mirror session",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTrafficMirrorTarget",
+        "desc": "Grants permission to create a traffic mirror target",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTransitGateway",
+        "desc": "Grants permission to create a transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTransitGatewayConnect",
+        "desc": "Grants permission to create a Connect attachment from a specified transit gateway\n                                                attachment",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTransitGatewayConnectPeer",
+        "desc": "Grants permission to create a Connect peer between a transit gateway and an appliance",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTransitGatewayMulticastDomain",
+        "desc": "Grants permission to create a multicast domain for a transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTransitGatewayPeeringAttachment",
+        "desc": "Grants permission to request a transit gateway peering attachment between a requester\n                                                and accepter transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTransitGatewayPrefixListReference",
+        "desc": "Grants permission to create a transit gateway prefix list reference",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTransitGatewayRoute",
+        "desc": "Grants permission to create a static route for a transit gateway route table",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTransitGatewayRouteTable",
+        "desc": "Grants permission to create a route table for a transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "CreateTransitGatewayVpcAttachment",
+        "desc": "Grants permission to attach a VPC to a transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "CreateVolume",
+        "desc": "Grants permission to create an EBS volume",
+        "access": "Write"
+    },
+    {
+        "action": "CreateVpc",
+        "desc": "Grants permission to create a VPC with a specified CIDR block",
+        "access": "Write"
+    },
+    {
+        "action": "CreateVpcEndpoint",
+        "desc": "Grants permission to create a VPC endpoint for an AWS service",
+        "access": "Write"
+    },
+    {
+        "action": "CreateVpcEndpointConnectionNotification",
+        "desc": "Grants permission to create a connection notification for a VPC endpoint or VPC endpoint\n                                                service",
+        "access": "Write"
+    },
+    {
+        "action": "CreateVpcEndpointServiceConfiguration",
+        "desc": "Grants permission to create a VPC endpoint service configuration to which service\n                                                consumers (AWS accounts, IAM users, and IAM roles) can connect",
+        "access": "Write"
+    },
+    {
+        "action": "CreateVpcPeeringConnection",
+        "desc": "Grants permission to request a VPC peering connection between two VPCs",
+        "access": "Write"
+    },
+    {
+        "action": "CreateVpnConnection",
+        "desc": "Grants permission to create a VPN connection between a virtual private gateway or\n                                                transit gateway and a customer gateway",
+        "access": "Write"
+    },
+    {
+        "action": "CreateVpnConnectionRoute",
+        "desc": "Grants permission to create a static route for a VPN connection between a virtual\n                                                private gateway and a customer gateway",
+        "access": "Write"
+    },
+    {
+        "action": "CreateVpnGateway",
+        "desc": "Grants permission to create a virtual private gateway",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteCarrierGateway",
+        "desc": "Grants permission to delete a carrier gateway",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteClientVpnEndpoint",
+        "desc": "Grants permission to delete a Client VPN endpoint",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteClientVpnRoute",
+        "desc": "Grants permission to delete a route from a Client VPN endpoint",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteCustomerGateway",
+        "desc": "Grants permission to delete a customer gateway",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteDhcpOptions",
+        "desc": "Grants permission to delete a set of DHCP options",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteEgressOnlyInternetGateway",
+        "desc": "Grants permission to delete an egress-only internet gateway",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteFleets",
+        "desc": "Grants permission to delete one or more EC2 Fleets",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteFlowLogs",
+        "desc": "Grants permission to delete one or more flow logs",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteFpgaImage",
+        "desc": "Grants permission to delete an Amazon FPGA Image (AFI)",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteInstanceEventWindow",
+        "desc": "Grants permission to delete the specified event window",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteInternetGateway",
+        "desc": "Grants permission to delete an internet gateway",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteKeyPair",
+        "desc": "Grants permission to delete a  key pair by removing the public key from Amazon EC2",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteLaunchTemplate",
+        "desc": "Grants permission to delete a launch template and its associated versions",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteLaunchTemplateVersions",
+        "desc": "Grants permission to delete one or more versions of a launch template",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteLocalGatewayRoute",
+        "desc": "Grants permission to delete a route from a local gateway route table",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteLocalGatewayRouteTableVpcAssociation",
+        "desc": "Grants permission to delete an association between a VPC and local gateway route table",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteManagedPrefixList",
+        "desc": "Grants permission to delete a managed prefix list",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteNatGateway",
+        "desc": "Grants permission to delete a NAT gateway",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteNetworkAcl",
+        "desc": "Grants permission to delete a network ACL",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteNetworkAclEntry",
+        "desc": "Grants permission to delete an inbound or outbound entry (rule) from a network ACL",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteNetworkInsightsAnalysis",
+        "desc": "Grants permission to delete a network insights analysis",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteNetworkInsightsPath",
+        "desc": "Grants permission to delete a network insights path",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteNetworkInterface",
+        "desc": "Grants permission to delete a detached network interface",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteNetworkInterfacePermission",
+        "desc": "Grants permission to delete a permission that is associated with a network interface",
+        "access": "Permissions management"
+    },
+    {
+        "action": "DeletePlacementGroup",
+        "desc": "Grants permission to delete a placement group",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteQueuedReservedInstances",
+        "desc": "Grants permission to delete the queued purchases for the specified Reserved Instances",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteRoute",
+        "desc": "Grants permission to delete a route from a route table",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteRouteTable",
+        "desc": "Grants permission to delete a route table",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteSecurityGroup",
+        "desc": "Grants permission to delete a security group",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteSnapshot",
+        "desc": "Grants permission to delete a snapshot of an EBS volume",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteSpotDatafeedSubscription",
+        "desc": "Grants permission to delete a data feed for Spot Instances",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteSubnet",
+        "desc": "Grants permission to delete a subnet",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteSubnetCidrReservation",
+        "desc": "Grants permission to delete a subnet CIDR reservation",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTags",
+        "desc": "Grants permission to delete one or more tags from Amazon EC2 resources",
+        "access": "Tagging"
+    },
+    {
+        "action": "DeleteTrafficMirrorFilter",
+        "desc": "Grants permission to delete a traffic mirror filter",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTrafficMirrorFilterRule",
+        "desc": "Grants permission to delete a traffic mirror filter rule",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTrafficMirrorSession",
+        "desc": "Grants permission to delete a traffic mirror session",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTrafficMirrorTarget",
+        "desc": "Grants permission to delete a traffic mirror target",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTransitGateway",
+        "desc": "Grants permission to delete a transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTransitGatewayConnect",
+        "desc": "Grants permission to delete a transit gateway connect attachment",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTransitGatewayConnectPeer",
+        "desc": "Grants permission to delete a transit gateway connect peer",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTransitGatewayMulticastDomain",
+        "desc": "Grants permission to delete a transit gateway multicast domain",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTransitGatewayPeeringAttachment",
+        "desc": "Grants permission to delete a peering attachment from a transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTransitGatewayPrefixListReference",
+        "desc": "Grants permission to delete a transit gateway prefix list reference",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTransitGatewayRoute",
+        "desc": "Grants permission to delete a route from a transit gateway route table",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTransitGatewayRouteTable",
+        "desc": "Grants permission to delete a transit gateway route table",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteTransitGatewayVpcAttachment",
+        "desc": "Grants permission to delete a VPC attachment from a transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteVolume",
+        "desc": "Grants permission to delete an EBS volume",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteVpc",
+        "desc": "Grants permission to delete a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteVpcEndpointConnectionNotifications",
+        "desc": "Grants permission to delete one or more VPC endpoint connection notifications",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteVpcEndpointServiceConfigurations",
+        "desc": "Grants permission to delete one or more VPC endpoint service configurations",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteVpcEndpoints",
+        "desc": "Grants permission to delete one or more VPC endpoints",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteVpcPeeringConnection",
+        "desc": "Grants permission to delete a VPC peering connection",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteVpnConnection",
+        "desc": "Grants permission to delete a VPN connection",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteVpnConnectionRoute",
+        "desc": "Grants permission to delete a static route for a VPN connection between a virtual\n                                                private gateway and a customer gateway",
+        "access": "Write"
+    },
+    {
+        "action": "DeleteVpnGateway",
+        "desc": "Grants permission to delete a virtual private gateway",
+        "access": "Write"
+    },
+    {
+        "action": "DeprovisionByoipCidr",
+        "desc": "Grants permission to release an IP address range that was provisioned through bring\n                                                your own IP addresses (BYOIP), and to delete the corresponding address pool",
+        "access": "Write"
+    },
+    {
+        "action": "DeregisterImage",
+        "desc": "Grants permission to deregister an Amazon Machine Image (AMI)",
+        "access": "Write"
+    },
+    {
+        "action": "DeregisterInstanceEventNotificationAttributes",
+        "desc": "Grants permission to remove tags from the set of tags to include in notifications\n                                                about scheduled events for your instances",
+        "access": "Write"
+    },
+    {
+        "action": "DeregisterTransitGatewayMulticastGroupMembers",
+        "desc": "Grants permission to deregister one or more network interface members from a group\n                                                IP address in a transit gateway multicast domain",
+        "access": "Write"
+    },
+    {
+        "action": "DeregisterTransitGatewayMulticastGroupSources",
+        "desc": "Grants permission to deregister one or more network interface sources from a group\n                                                IP address in a transit gateway multicast domain",
+        "access": "Write"
+    },
+    {
+        "action": "DescribeAccountAttributes",
+        "desc": "Grants permission to describe the attributes of the AWS account",
+        "access": "List"
+    },
+    {
+        "action": "DescribeAddresses",
+        "desc": "Grants permission to describe one or more Elastic IP addresses",
+        "access": "List"
+    },
+    {
+        "action": "DescribeAddressesAttribute",
+        "desc": "Grants permission to describe the attributes of the specified Elastic IP addresses",
+        "access": "List"
+    },
+    {
+        "action": "DescribeAggregateIdFormat",
+        "desc": "Grants permission to describe the longer ID format settings for all resource types",
+        "access": "List"
+    },
+    {
+        "action": "DescribeAvailabilityZones",
+        "desc": "Grants permission to describe one or more of the Availability Zones that are available\n                                                to you",
+        "access": "List"
+    },
+    {
+        "action": "DescribeBundleTasks",
+        "desc": "Grants permission to describe one or more bundling tasks",
+        "access": "List"
+    },
+    {
+        "action": "DescribeByoipCidrs",
+        "desc": "Grants permission to describe the IP address ranges that were provisioned through\n                                                bring your own IP addresses (BYOIP)",
+        "access": "List"
+    },
+    {
+        "action": "DescribeCapacityReservationFleets",
+        "desc": "Grants permission to describe one or more Capacity Reservation Fleets",
+        "access": "List"
+    },
+    {
+        "action": "DescribeCapacityReservations",
+        "desc": "Grants permission to describe one or more Capacity Reservations",
+        "access": "List"
+    },
+    {
+        "action": "DescribeCarrierGateways",
+        "desc": "Grants permission to describe one or more Carrier Gateways",
+        "access": "List"
+    },
+    {
+        "action": "DescribeClassicLinkInstances",
+        "desc": "Grants permission to describe one or more linked EC2-Classic instances",
+        "access": "List"
+    },
+    {
+        "action": "DescribeClientVpnAuthorizationRules",
+        "desc": "Grants permission to describe the authorization rules for a Client VPN endpoint",
+        "access": "List"
+    },
+    {
+        "action": "DescribeClientVpnConnections",
+        "desc": "Grants permission to describe active client connections and connections that have\n                                                been terminated within the last 60 minutes for a Client VPN endpoint",
+        "access": "List"
+    },
+    {
+        "action": "DescribeClientVpnEndpoints",
+        "desc": "Grants permission to describe one or more Client VPN endpoints",
+        "access": "List"
+    },
+    {
+        "action": "DescribeClientVpnRoutes",
+        "desc": "Grants permission to describe the routes for a Client VPN endpoint",
+        "access": "List"
+    },
+    {
+        "action": "DescribeClientVpnTargetNetworks",
+        "desc": "Grants permission to describe the target networks that are associated with a Client\n                                                VPN endpoint",
+        "access": "List"
+    },
+    {
+        "action": "DescribeCoipPools",
+        "desc": "Grants permission to describe the specified customer-owned address pools or all of\n                                                your customer-owned address pools",
+        "access": "List"
+    },
+    {
+        "action": "DescribeConversionTasks",
+        "desc": "Grants permission to describe one or more conversion tasks",
+        "access": "List"
+    },
+    {
+        "action": "DescribeCustomerGateways",
+        "desc": "Grants permission to describe one or more customer gateways",
+        "access": "List"
+    },
+    {
+        "action": "DescribeDhcpOptions",
+        "desc": "Grants permission to describe one or more DHCP options sets",
+        "access": "List"
+    },
+    {
+        "action": "DescribeEgressOnlyInternetGateways",
+        "desc": "Grants permission to describe one or more egress-only internet gateways",
+        "access": "List"
+    },
+    {
+        "action": "DescribeElasticGpus",
+        "desc": "Grants permission to describe an Elastic Graphics accelerator that is associated with\n                                                an instance",
+        "access": "Read"
+    },
+    {
+        "action": "DescribeExportImageTasks",
+        "desc": "Grants permission to describe one or more export image tasks",
+        "access": "List"
+    },
+    {
+        "action": "DescribeExportTasks",
+        "desc": "Grants permission to describe one or more export instance tasks",
+        "access": "List"
+    },
+    {
+        "action": "DescribeFastSnapshotRestores",
+        "desc": "Grants permission to describe the state of fast snapshot restores for snapshots",
+        "access": "Read"
+    },
+    {
+        "action": "DescribeFleetHistory",
+        "desc": "Grants permission to describe the events for an EC2 Fleet during a specified time",
+        "access": "List"
+    },
+    {
+        "action": "DescribeFleetInstances",
+        "desc": "Grants permission to describe the running instances for an EC2 Fleet",
+        "access": "List"
+    },
+    {
+        "action": "DescribeFleets",
+        "desc": "Grants permission to describe one or more EC2 Fleets",
+        "access": "List"
+    },
+    {
+        "action": "DescribeFlowLogs",
+        "desc": "Grants permission to describe one or more flow logs",
+        "access": "List"
+    },
+    {
+        "action": "DescribeFpgaImageAttribute",
+        "desc": "Grants permission to describe the attributes of an Amazon FPGA Image (AFI)",
+        "access": "List"
+    },
+    {
+        "action": "DescribeFpgaImages",
+        "desc": "Grants permission to describe one or more Amazon FPGA Images (AFIs)",
+        "access": "List"
+    },
+    {
+        "action": "DescribeHostReservationOfferings",
+        "desc": "Grants permission to describe the Dedicated Host Reservations that are available to\n                                                purchase",
+        "access": "List"
+    },
+    {
+        "action": "DescribeHostReservations",
+        "desc": "Grants permission to describe the Dedicated Host Reservations that are associated\n                                                with Dedicated Hosts in the AWS account",
+        "access": "List"
+    },
+    {
+        "action": "DescribeHosts",
+        "desc": "Grants permission to describe one or more Dedicated Hosts",
+        "access": "List"
+    },
+    {
+        "action": "DescribeIamInstanceProfileAssociations",
+        "desc": "Grants permission to describe the IAM instance profile associations",
+        "access": "List"
+    },
+    {
+        "action": "DescribeIdFormat",
+        "desc": "Grants permission to describe the ID format settings for resources",
+        "access": "List"
+    },
+    {
+        "action": "DescribeIdentityIdFormat",
+        "desc": "Grants permission to describe the ID format settings for resources for an IAM user,\n                                                IAM role, or root user",
+        "access": "List"
+    },
+    {
+        "action": "DescribeImageAttribute",
+        "desc": "Grants permission to describe an attribute of an Amazon Machine Image (AMI)",
+        "access": "List"
+    },
+    {
+        "action": "DescribeImages",
+        "desc": "Grants permission to describe one or more images (AMIs, AKIs, and ARIs)",
+        "access": "List"
+    },
+    {
+        "action": "DescribeImportImageTasks",
+        "desc": "Grants permission to describe import virtual machine or import snapshot tasks",
+        "access": "List"
+    },
+    {
+        "action": "DescribeImportSnapshotTasks",
+        "desc": "Grants permission to describe import snapshot tasks",
+        "access": "List"
+    },
+    {
+        "action": "DescribeInstanceAttribute",
+        "desc": "Grants permission to describe the attributes of an instance",
+        "access": "List"
+    },
+    {
+        "action": "DescribeInstanceCreditSpecifications",
+        "desc": "Grants permission to describe the credit option for CPU usage of one or more burstable\n                                                performance instances",
+        "access": "List"
+    },
+    {
+        "action": "DescribeInstanceEventNotificationAttributes",
+        "desc": "Grants permission to describe the set of tags to include in notifications about scheduled\n                                                events for your instances",
+        "access": "List"
+    },
+    {
+        "action": "DescribeInstanceEventWindows",
+        "desc": "Grants permission to describe the specified event windows or all event windows",
+        "access": "List"
+    },
+    {
+        "action": "DescribeInstanceStatus",
+        "desc": "Grants permission to describe the status of one or more instances",
+        "access": "List"
+    },
+    {
+        "action": "DescribeInstanceTypeOfferings",
+        "desc": "Grants permission to describe the set of instance types that are offered in a location",
+        "access": "List"
+    },
+    {
+        "action": "DescribeInstanceTypes",
+        "desc": "Grants permission to describe the details of instance types that are offered in a\n                                                location",
+        "access": "List"
+    },
+    {
+        "action": "DescribeInstances",
+        "desc": "Grants permission to describe one or more instances",
+        "access": "List"
+    },
+    {
+        "action": "DescribeInternetGateways",
+        "desc": "Grants permission to describe one or more internet gateways",
+        "access": "List"
+    },
+    {
+        "action": "DescribeIpv6Pools",
+        "desc": "Grants permission to describe one or more IPv6 address pools",
+        "access": "List"
+    },
+    {
+        "action": "DescribeKeyPairs",
+        "desc": "Grants permission to describe one or more key pairs",
+        "access": "List"
+    },
+    {
+        "action": "DescribeLaunchTemplateVersions",
+        "desc": "Grants permission to describe one or more launch template versions",
+        "access": "List"
+    },
+    {
+        "action": "DescribeLaunchTemplates",
+        "desc": "Grants permission to describe one or more launch templates",
+        "access": "List"
+    },
+    {
+        "action": "DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociations",
+        "desc": "Grants permission to describe the associations between virtual interface groups and\n                                                local gateway route tables",
+        "access": "List"
+    },
+    {
+        "action": "DescribeLocalGatewayRouteTableVpcAssociations",
+        "desc": "Grants permission to describe an association between VPCs and local gateway route\n                                                tables",
+        "access": "List"
+    },
+    {
+        "action": "DescribeLocalGatewayRouteTables",
+        "desc": "Grants permission to describe one or more local gateway route tables",
+        "access": "List"
+    },
+    {
+        "action": "DescribeLocalGatewayVirtualInterfaceGroups",
+        "desc": "Grants permission to describe local gateway virtual interface groups",
+        "access": "List"
+    },
+    {
+        "action": "DescribeLocalGatewayVirtualInterfaces",
+        "desc": "Grants permission to describe local gateway virtual interfaces",
+        "access": "List"
+    },
+    {
+        "action": "DescribeLocalGateways",
+        "desc": "Grants permission to describe one or more local gateways",
+        "access": "List"
+    },
+    {
+        "action": "DescribeManagedPrefixLists",
+        "desc": "Grants permission to describe your managed prefix lists and any AWS-managed prefix\n                                                lists",
+        "access": "List"
+    },
+    {
+        "action": "DescribeMovingAddresses",
+        "desc": "Grants permission to describe Elastic IP addresses that are being moved to the EC2-VPC\n                                                platform",
+        "access": "List"
+    },
+    {
+        "action": "DescribeNatGateways",
+        "desc": "Grants permission to describe one or more NAT gateways",
+        "access": "List"
+    },
+    {
+        "action": "DescribeNetworkAcls",
+        "desc": "Grants permission to describe one or more network ACLs",
+        "access": "List"
+    },
+    {
+        "action": "DescribeNetworkInsightsAnalyses",
+        "desc": "Grants permission to describe one or more network insights analyses",
+        "access": "List"
+    },
+    {
+        "action": "DescribeNetworkInsightsPaths",
+        "desc": "Grants permission to describe one or more network insights paths",
+        "access": "List"
+    },
+    {
+        "action": "DescribeNetworkInterfaceAttribute",
+        "desc": "Grants permission to describe a network interface attribute",
+        "access": "List"
+    },
+    {
+        "action": "DescribeNetworkInterfacePermissions",
+        "desc": "Grants permission to describe the permissions that are associated with a network interface",
+        "access": "List"
+    },
+    {
+        "action": "DescribeNetworkInterfaces",
+        "desc": "Grants permission to describe one or more network interfaces",
+        "access": "List"
+    },
+    {
+        "action": "DescribePlacementGroups",
+        "desc": "Grants permission to describe one or more placement groups",
+        "access": "List"
+    },
+    {
+        "action": "DescribePrefixLists",
+        "desc": "Grants permission to describe available AWS services in a prefix list format",
+        "access": "List"
+    },
+    {
+        "action": "DescribePrincipalIdFormat",
+        "desc": "Grants permission to describe the ID format settings for the root user and all IAM\n                                                roles and IAM users that have explicitly specified a longer ID (17-character ID) preference",
+        "access": "List"
+    },
+    {
+        "action": "DescribePublicIpv4Pools",
+        "desc": "Grants permission to describe one or more IPv4 address pools",
+        "access": "List"
+    },
+    {
+        "action": "DescribeRegions",
+        "desc": "Grants permission to describe one or more AWS Regions that are currently available\n                                                in your account",
+        "access": "List"
+    },
+    {
+        "action": "DescribeReplaceRootVolumeTasks",
+        "desc": "Grants permission to describe a root volume replacement task",
+        "access": "List"
+    },
+    {
+        "action": "DescribeReservedInstances",
+        "desc": "Grants permission to describe one or more purchased Reserved Instances in your account",
+        "access": "List"
+    },
+    {
+        "action": "DescribeReservedInstancesListings",
+        "desc": "Grants permission to describe your account's Reserved Instance listings in the Reserved\n                                                Instance Marketplace",
+        "access": "List"
+    },
+    {
+        "action": "DescribeReservedInstancesModifications",
+        "desc": "Grants permission to describe the modifications made to one or more Reserved Instances",
+        "access": "List"
+    },
+    {
+        "action": "DescribeReservedInstancesOfferings",
+        "desc": "Grants permission to describe the Reserved Instance offerings that are available for\n                                                purchase",
+        "access": "List"
+    },
+    {
+        "action": "DescribeRouteTables",
+        "desc": "Grants permission to describe one or more route tables",
+        "access": "List"
+    },
+    {
+        "action": "DescribeScheduledInstanceAvailability",
+        "desc": "Grants permission to find available schedules for Scheduled Instances",
+        "access": "Read"
+    },
+    {
+        "action": "DescribeScheduledInstances",
+        "desc": "Grants permission to describe one or more Scheduled Instances in your account",
+        "access": "Read"
+    },
+    {
+        "action": "DescribeSecurityGroupReferences",
+        "desc": "Grants permission to describe the VPCs on the other side of a VPC peering connection\n                                                that are referencing specified VPC security groups",
+        "access": "List"
+    },
+    {
+        "action": "DescribeSecurityGroupRules",
+        "desc": "Grants permission to describe one or more of your security group rules",
+        "access": "List"
+    },
+    {
+        "action": "DescribeSecurityGroups",
+        "desc": "Grants permission to describe one or more security groups",
+        "access": "List"
+    },
+    {
+        "action": "DescribeSnapshotAttribute",
+        "desc": "Grants permission to describe an attribute of a snapshot",
+        "access": "List"
+    },
+    {
+        "action": "DescribeSnapshots",
+        "desc": "Grants permission to describe one or more EBS snapshots",
+        "access": "List"
+    },
+    {
+        "action": "DescribeSpotDatafeedSubscription",
+        "desc": "Grants permission to describe the data feed for Spot Instances",
+        "access": "List"
+    },
+    {
+        "action": "DescribeSpotFleetInstances",
+        "desc": "Grants permission to describe the running instances for a Spot Fleet",
+        "access": "List"
+    },
+    {
+        "action": "DescribeSpotFleetRequestHistory",
+        "desc": "Grants permission to describe the events for a Spot Fleet request during a specified\n                                                time",
+        "access": "List"
+    },
+    {
+        "action": "DescribeSpotFleetRequests",
+        "desc": "Grants permission to describe one or more Spot Fleet requests",
+        "access": "List"
+    },
+    {
+        "action": "DescribeSpotInstanceRequests",
+        "desc": "Grants permission to describe one or more Spot Instance requests",
+        "access": "List"
+    },
+    {
+        "action": "DescribeSpotPriceHistory",
+        "desc": "Grants permission to describe the Spot Instance price history",
+        "access": "List"
+    },
+    {
+        "action": "DescribeStaleSecurityGroups",
+        "desc": "Grants permission to describe the stale security group rules for security groups in\n                                                a specified VPC",
+        "access": "List"
+    },
+    {
+        "action": "DescribeStoreImageTasks",
+        "desc": "Grants permission to describe the progress of the AMI store tasks",
+        "access": "List"
+    },
+    {
+        "action": "DescribeSubnets",
+        "desc": "Grants permission to describe one or more subnets",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTags",
+        "desc": "Grants permission to describe one or more tags for an Amazon EC2 resource",
+        "access": "Read"
+    },
+    {
+        "action": "DescribeTrafficMirrorFilters",
+        "desc": "Grants permission to describe one or more traffic mirror filters",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTrafficMirrorSessions",
+        "desc": "Grants permission to describe one or more traffic mirror sessions",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTrafficMirrorTargets",
+        "desc": "Grants permission to describe one or more traffic mirror targets",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTransitGatewayAttachments",
+        "desc": "Grants permission to describe one or more attachments between resources and transit\n                                                gateways",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTransitGatewayConnectPeers",
+        "desc": "Grants permission to describe one or more transit gateway connect peers",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTransitGatewayConnects",
+        "desc": "Grants permission to describe one or more transit gateway connect attachments",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTransitGatewayMulticastDomains",
+        "desc": "Grants permission to describe one or more transit gateway multicast domains",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTransitGatewayPeeringAttachments",
+        "desc": "Grants permission to describe one or more transit gateway peering attachments",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTransitGatewayRouteTables",
+        "desc": "Grants permission to describe one or more transit gateway route tables",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTransitGatewayVpcAttachments",
+        "desc": "Grants permission to describe one or more VPC attachments on a transit gateway",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTransitGateways",
+        "desc": "Grants permission to describe one or more transit gateways",
+        "access": "List"
+    },
+    {
+        "action": "DescribeTrunkInterfaceAssociations",
+        "desc": "Grants permission to describe one or more network interface trunk associations",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVolumeAttribute",
+        "desc": "Grants permission to describe an attribute of an EBS volume",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVolumeStatus",
+        "desc": "Grants permission to describe the status of one or more EBS volumes",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVolumes",
+        "desc": "Grants permission to describe one or more EBS volumes",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVolumesModifications",
+        "desc": "Grants permission to describe the current modification status of one or more EBS volumes",
+        "access": "Read"
+    },
+    {
+        "action": "DescribeVpcAttribute",
+        "desc": "Grants permission to describe an attribute of a VPC",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVpcClassicLink",
+        "desc": "Grants permission to describe the ClassicLink status of one or more VPCs",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVpcClassicLinkDnsSupport",
+        "desc": "Grants permission to describe the ClassicLink DNS support status of one or more VPCs",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVpcEndpointConnectionNotifications",
+        "desc": "Grants permission to describe the connection notifications for VPC endpoints and VPC\n                                                endpoint services",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVpcEndpointConnections",
+        "desc": "Grants permission to describe the VPC endpoint connections to your VPC endpoint services",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVpcEndpointServiceConfigurations",
+        "desc": "Grants permission to describe VPC endpoint service configurations (your services)",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVpcEndpointServicePermissions",
+        "desc": "Grants permission to describe the principals (service consumers) that are permitted\n                                                to discover your VPC endpoint service",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVpcEndpointServices",
+        "desc": "Grants permission to describe all supported AWS services that can be specified when\n                                                creating a VPC endpoint",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVpcEndpoints",
+        "desc": "Grants permission to describe one or more VPC endpoints",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVpcPeeringConnections",
+        "desc": "Grants permission to describe one or more VPC peering connections",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVpcs",
+        "desc": "Grants permission to describe one or more VPCs",
+        "access": "List"
+    },
+    {
+        "action": "DescribeVpnConnections",
+        "desc": "Grants permission to describe one or more VPN connections",
+        "access": "Read"
+    },
+    {
+        "action": "DescribeVpnGateways",
+        "desc": "Grants permission to describe one or more virtual private gateways",
+        "access": "List"
+    },
+    {
+        "action": "DetachClassicLinkVpc",
+        "desc": "Grants permission to unlink (detach) a linked EC2-Classic instance from a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "DetachInternetGateway",
+        "desc": "Grants permission to detach an internet gateway from a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "DetachNetworkInterface",
+        "desc": "Grants permission to detach a network interface from an instance",
+        "access": "Write"
+    },
+    {
+        "action": "DetachVolume",
+        "desc": "Grants permission to detach an EBS volume from an instance",
+        "access": "Write"
+    },
+    {
+        "action": "DetachVpnGateway",
+        "desc": "Grants permission to detach a virtual private gateway from a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "DisableEbsEncryptionByDefault",
+        "desc": "Grants permission to disable EBS encryption by default for your account",
+        "access": "Write"
+    },
+    {
+        "action": "DisableFastSnapshotRestores",
+        "desc": "Grants permission to disable fast snapshot restores for one or more snapshots in specified\n                                                Availability Zones",
+        "access": "Write"
+    },
+    {
+        "action": "DisableImageDeprecation",
+        "desc": "Grants permission to cancel the deprecation of the specified AMI",
+        "access": "Write"
+    },
+    {
+        "action": "DisableSerialConsoleAccess",
+        "desc": "Grants permission to disable access to the EC2 serial console of all instances for\n                                                your account",
+        "access": "Write"
+    },
+    {
+        "action": "DisableTransitGatewayRouteTablePropagation",
+        "desc": "Grants permission to disable a resource attachment from propagating routes to the\n                                                specified propagation route table",
+        "access": "Write"
+    },
+    {
+        "action": "DisableVgwRoutePropagation",
+        "desc": "Grants permission to disable a virtual private gateway from propagating routes to\n                                                a specified route table of a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "DisableVpcClassicLink",
+        "desc": "Grants permission to disable ClassicLink for a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "DisableVpcClassicLinkDnsSupport",
+        "desc": "Grants permission to disable ClassicLink DNS support for a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "DisassociateAddress",
+        "desc": "Grants permission to disassociate an Elastic IP address from an instance or network\n                                                interface",
+        "access": "Write"
+    },
+    {
+        "action": "DisassociateClientVpnTargetNetwork",
+        "desc": "Grants permission to disassociate a target network from a Client VPN endpoint",
+        "access": "Write"
+    },
+    {
+        "action": "DisassociateEnclaveCertificateIamRole",
+        "desc": "Grants permission to disassociate an ACM certificate from a IAM role",
+        "access": "Write"
+    },
+    {
+        "action": "DisassociateIamInstanceProfile",
+        "desc": "Grants permission to disassociate an IAM instance profile from a running or stopped\n                                                instance",
+        "access": "Write"
+    },
+    {
+        "action": "DisassociateInstanceEventWindow",
+        "desc": "Grants permission to disassociate one or more targets from an event window",
+        "access": "Write"
+    },
+    {
+        "action": "DisassociateRouteTable",
+        "desc": "Grants permission to disassociate a subnet from a route table",
+        "access": "Write"
+    },
+    {
+        "action": "DisassociateSubnetCidrBlock",
+        "desc": "Grants permission to disassociate a CIDR block from a subnet",
+        "access": "Write"
+    },
+    {
+        "action": "DisassociateTransitGatewayMulticastDomain",
+        "desc": "Grants permission to disassociate one or more subnets from a transit gateway multicast\n                                                domain",
+        "access": "Write"
+    },
+    {
+        "action": "DisassociateTransitGatewayRouteTable",
+        "desc": "Grants permission to disassociate a resource attachment from a transit gateway route\n                                                table",
+        "access": "Write"
+    },
+    {
+        "action": "DisassociateTrunkInterface",
+        "desc": "Grants permission to disassociate a branch network interface to a trunk network interface",
+        "access": "Write"
+    },
+    {
+        "action": "DisassociateVpcCidrBlock",
+        "desc": "Grants permission to disassociate a CIDR block from a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "EnableEbsEncryptionByDefault",
+        "desc": "Grants permission to enable EBS encryption by default for your account",
+        "access": "Write"
+    },
+    {
+        "action": "EnableFastSnapshotRestores",
+        "desc": "Grants permission to enable fast snapshot restores for one or more snapshots in specified\n                                                Availability Zones",
+        "access": "Write"
+    },
+    {
+        "action": "EnableImageDeprecation",
+        "desc": "Grants permission to enable deprecation of the specified AMI at the specified date\n                                                and time",
+        "access": "Write"
+    },
+    {
+        "action": "EnableSerialConsoleAccess",
+        "desc": "Grants permission to enable access to the EC2 serial console of all instances for\n                                                your account",
+        "access": "Write"
+    },
+    {
+        "action": "EnableTransitGatewayRouteTablePropagation",
+        "desc": "Grants permission to enable an attachment to propagate routes to a propagation route\n                                                table",
+        "access": "Write"
+    },
+    {
+        "action": "EnableVgwRoutePropagation",
+        "desc": "Grants permission to enable a virtual private gateway to propagate routes to a VPC\n                                                route table",
+        "access": "Write"
+    },
+    {
+        "action": "EnableVolumeIO",
+        "desc": "Grants permission to enable I/O operations for a volume that had I/O operations disabled",
+        "access": "Write"
+    },
+    {
+        "action": "EnableVpcClassicLink",
+        "desc": "Grants permission to enable a VPC for ClassicLink",
+        "access": "Write"
+    },
+    {
+        "action": "EnableVpcClassicLinkDnsSupport",
+        "desc": "Grants permission to enable a VPC to support DNS hostname resolution for ClassicLink",
+        "access": "Write"
+    },
+    {
+        "action": "ExportClientVpnClientCertificateRevocationList",
+        "desc": "Grants permission to download the client certificate revocation list for a Client\n                                                VPN endpoint",
+        "access": "Read"
+    },
+    {
+        "action": "ExportClientVpnClientConfiguration",
+        "desc": "Grants permission to download the contents of the Client VPN endpoint configuration\n                                                file for a Client VPN endpoint",
+        "access": "Read"
+    },
+    {
+        "action": "ExportImage",
+        "desc": "Grants permission to export an Amazon Machine Image (AMI) to a VM file",
+        "access": "Write"
+    },
+    {
+        "action": "ExportTransitGatewayRoutes",
+        "desc": "Grants permission to export routes from a transit gateway route table to an Amazon\n                                                S3 bucket",
+        "access": "Write"
+    },
+    {
+        "action": "GetAssociatedEnclaveCertificateIamRoles",
+        "desc": "Grants permission to get the list of roles associated with an ACM certificate",
+        "access": "Read"
+    },
+    {
+        "action": "GetAssociatedIpv6PoolCidrs",
+        "desc": "Grants permission to get information about the IPv6 CIDR block associations for a\n                                                specified IPv6 address pool",
+        "access": "Read"
+    },
+    {
+        "action": "GetCapacityReservationUsage",
+        "desc": "Grants permission to get usage information about a Capacity Reservation",
+        "access": "Read"
+    },
+    {
+        "action": "GetCoipPoolUsage",
+        "desc": "Grants permission to describe the allocations from the specified customer-owned address\n                                                pool",
+        "access": "Read"
+    },
+    {
+        "action": "GetConsoleOutput",
+        "desc": "Grants permission to get the console output for an instance",
+        "access": "Read"
+    },
+    {
+        "action": "GetConsoleScreenshot",
+        "desc": "Grants permission to retrieve a JPG-format screenshot of a running instance",
+        "access": "Read"
+    },
+    {
+        "action": "GetDefaultCreditSpecification",
+        "desc": "Grants permission to get the default credit option for CPU usage of a burstable performance\n                                                instance family",
+        "access": "Read"
+    },
+    {
+        "action": "GetEbsDefaultKmsKeyId",
+        "desc": "Grants permission to get the ID of the default customer master key (CMK) for EBS encryption\n                                                by default",
+        "access": "Read"
+    },
+    {
+        "action": "GetEbsEncryptionByDefault",
+        "desc": "Grants permission to describe whether EBS encryption by default is enabled for your\n                                                account",
+        "access": "Read"
+    },
+    {
+        "action": "GetFlowLogsIntegrationTemplate",
+        "desc": "Grants permission to generate a CloudFormation template to streamline the integration\n                                                of VPC flow logs with Amazon Athena",
+        "access": "Read"
+    },
+    {
+        "action": "GetGroupsForCapacityReservation",
+        "desc": "Grants permission to list the resource groups to which a Capacity Reservation has\n                                                been added",
+        "access": "List"
+    },
+    {
+        "action": "GetHostReservationPurchasePreview",
+        "desc": "Grants permission to preview a reservation purchase with configurations that match\n                                                those of a Dedicated Host",
+        "access": "Read"
+    },
+    {
+        "action": "GetLaunchTemplateData",
+        "desc": "Grants permission to get the configuration data of the specified instance for use\n                                                with a new launch template or launch template version",
+        "access": "Read"
+    },
+    {
+        "action": "GetManagedPrefixListAssociations",
+        "desc": "Grants permission to get information about the resources that are associated with\n                                                the specified managed prefix list",
+        "access": "Read"
+    },
+    {
+        "action": "GetManagedPrefixListEntries",
+        "desc": "Grants permission to get information about the entries for a specified managed prefix\n                                                list",
+        "access": "Read"
+    },
+    {
+        "action": "GetPasswordData",
+        "desc": "Grants permission to retrieve the encrypted administrator password for a running Windows\n                                                instance",
+        "access": "Read"
+    },
+    {
+        "action": "GetReservedInstancesExchangeQuote",
+        "desc": "Grants permission to return a quote and exchange information for exchanging one or\n                                                more Convertible Reserved Instances for a new Convertible Reserved Instance",
+        "access": "Read"
+    },
+    {
+        "action": "GetSerialConsoleAccessStatus",
+        "desc": "Grants permission to retrieve the access status of your account to the EC2 serial\n                                                console of all instances",
+        "access": "Read"
+    },
+    {
+        "action": "GetSubnetCidrReservations",
+        "desc": "Grants permission to retrieve information about the subnet CIDR reservations",
+        "access": "Read"
+    },
+    {
+        "action": "GetTransitGatewayAttachmentPropagations",
+        "desc": "Grants permission to list the route tables to which a resource attachment propagates\n                                                routes",
+        "access": "List"
+    },
+    {
+        "action": "GetTransitGatewayMulticastDomainAssociations",
+        "desc": "Grants permission to get information about the associations for a transit gateway\n                                                multicast domain",
+        "access": "List"
+    },
+    {
+        "action": "GetTransitGatewayPrefixListReferences",
+        "desc": "Grants permission to get information about prefix list references for a transit gateway\n                                                route table",
+        "access": "List"
+    },
+    {
+        "action": "GetTransitGatewayRouteTableAssociations",
+        "desc": "Grants permission to get information about associations for a transit gateway route\n                                                table",
+        "access": "List"
+    },
+    {
+        "action": "GetTransitGatewayRouteTablePropagations",
+        "desc": "Grants permission to get information about the route table propagations for a transit\n                                                gateway route table",
+        "access": "List"
+    },
+    {
+        "action": "GetVpnConnectionDeviceSampleConfiguration",
+        "desc": "Grants permission to download an AWS-provided sample configuration file to be used\n                                                with the customer gateway device",
+        "access": "List"
+    },
+    {
+        "action": "GetVpnConnectionDeviceTypes",
+        "desc": "Grants permission to obtain a list of customer gateway devices for which sample configuration\n                                                files can be provided",
+        "access": "List"
+    },
+    {
+        "action": "ImportClientVpnClientCertificateRevocationList",
+        "desc": "Grants permission to upload a client certificate revocation list to a Client VPN endpoint",
+        "access": "Write"
+    },
+    {
+        "action": "ImportImage",
+        "desc": "Grants permission to import single or multi-volume disk images or EBS snapshots into\n                                                an Amazon Machine Image (AMI)",
+        "access": "Write"
+    },
+    {
+        "action": "ImportInstance",
+        "desc": "Grants permission to create an import instance task using metadata from a disk image",
+        "access": "Write"
+    },
+    {
+        "action": "ImportKeyPair",
+        "desc": "Grants permission to import a public key from an RSA key pair that was created with\n                                                a third-party tool",
+        "access": "Write"
+    },
+    {
+        "action": "ImportSnapshot",
+        "desc": "Grants permission to import a disk into an EBS snapshot",
+        "access": "Write"
+    },
+    {
+        "action": "ImportVolume",
+        "desc": "Grants permission to create an import volume task using metadata from a disk image",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyAddressAttribute",
+        "desc": "Grants permission to modify an attribute of the specified Elastic IP address",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyAvailabilityZoneGroup",
+        "desc": "Grants permission to modify  the opt-in status of the Local Zone and Wavelength Zone\n                                                group for your account",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyCapacityReservation",
+        "desc": "Grants permission to modify a Capacity Reservation's capacity and the conditions under\n                                                which it is to be released",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyCapacityReservationFleet",
+        "desc": "Grants permission to modify a Capacity Reservation Fleet",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyClientVpnEndpoint",
+        "desc": "Grants permission to modify a Client VPN endpoint",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyDefaultCreditSpecification",
+        "desc": "Grants permission to change the account level default credit option for CPU usage\n                                                of burstable performance instances",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyEbsDefaultKmsKeyId",
+        "desc": "Grants permission to change the default customer master key (CMK) for EBS encryption\n                                                by default for your account",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyFleet",
+        "desc": "Grants permission to modify an EC2 Fleet",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyFpgaImageAttribute",
+        "desc": "Grants permission to modify an attribute of an Amazon FPGA Image (AFI)",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyHosts",
+        "desc": "Grants permission to modify a Dedicated Host",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyIdFormat",
+        "desc": "Grants permission to modify the ID format for a resource",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyIdentityIdFormat",
+        "desc": "Grants permission to modify the ID format of a resource for a specific principal in\n                                                your account",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyImageAttribute",
+        "desc": "Grants permission to modify an attribute of an Amazon Machine Image (AMI)",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyInstanceAttribute",
+        "desc": "Grants permission to modify an attribute of an instance",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyInstanceCapacityReservationAttributes",
+        "desc": "Grants permission to modify the Capacity Reservation settings for a stopped instance",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyInstanceCreditSpecification",
+        "desc": "Grants permission to modify the credit option for CPU usage on an instance",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyInstanceEventStartTime",
+        "desc": "Grants permission to modify the start time for a scheduled EC2 instance event",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyInstanceEventWindow",
+        "desc": "Grants permission to modify the specified event window",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyInstanceMetadataOptions",
+        "desc": "Grants permission to modify the metadata options for an instance",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyInstancePlacement",
+        "desc": "Grants permission to modify the placement attributes for an instance",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyLaunchTemplate",
+        "desc": "Grants permission to modify a launch template",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyManagedPrefixList",
+        "desc": "Grants permission to modify a managed prefix list",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyNetworkInterfaceAttribute",
+        "desc": "Grants permission to modify an attribute of a network interface",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyReservedInstances",
+        "desc": "Grants permission to modify attributes of one or more Reserved Instances",
+        "access": "Write"
+    },
+    {
+        "action": "ModifySecurityGroupRules",
+        "desc": "Grants permission to modify the rules of a security group",
+        "access": "Write"
+    },
+    {
+        "action": "ModifySnapshotAttribute",
+        "desc": "Grants permission to add or remove permission settings for a snapshot",
+        "access": "Permissions management"
+    },
+    {
+        "action": "ModifySpotFleetRequest",
+        "desc": "Grants permission to modify a Spot Fleet request",
+        "access": "Write"
+    },
+    {
+        "action": "ModifySubnetAttribute",
+        "desc": "Grants permission to modify an attribute of a subnet",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyTrafficMirrorFilterNetworkServices",
+        "desc": "Grants permission to allow or restrict mirroring network services",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyTrafficMirrorFilterRule",
+        "desc": "Grants permission to modify a traffic mirror rule",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyTrafficMirrorSession",
+        "desc": "Grants permission to modify a traffic mirror session",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyTransitGateway",
+        "desc": "Grants permission to modify a transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyTransitGatewayPrefixListReference",
+        "desc": "Grants permission to modify a transit gateway prefix list reference",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyTransitGatewayVpcAttachment",
+        "desc": "Grants permission to modify a VPC attachment on a transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVolume",
+        "desc": "Grants permission to modify the parameters of an EBS volume",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVolumeAttribute",
+        "desc": "Grants permission to modify an attribute of a volume",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVpcAttribute",
+        "desc": "Grants permission to modify an attribute of a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVpcEndpoint",
+        "desc": "Grants permission to modify an attribute of a VPC endpoint",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVpcEndpointConnectionNotification",
+        "desc": "Grants permission to modify a connection notification for a VPC endpoint or VPC endpoint\n                                                service",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVpcEndpointServiceConfiguration",
+        "desc": "Grants permission to modify the attributes of a VPC endpoint service configuration",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVpcEndpointServicePermissions",
+        "desc": "Grants permission to modify the permissions for a VPC endpoint service",
+        "access": "Permissions management"
+    },
+    {
+        "action": "ModifyVpcPeeringConnectionOptions",
+        "desc": "Grants permission to modify the VPC peering connection options on one side of a VPC\n                                                peering connection",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVpcTenancy",
+        "desc": "Grants permission to modify the instance tenancy attribute of a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVpnConnection",
+        "desc": "Grants permission to modify the target gateway of a Site-to-Site VPN connection",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVpnConnectionOptions",
+        "desc": "Grants permission to modify the connection options for your Site-to-Site VPN connection",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVpnTunnelCertificate",
+        "desc": "Grants permission to modify the certificate for a Site-to-Site VPN connection",
+        "access": "Write"
+    },
+    {
+        "action": "ModifyVpnTunnelOptions",
+        "desc": "Grants permission to modify the options for a Site-to-Site VPN connection",
+        "access": "Write"
+    },
+    {
+        "action": "MonitorInstances",
+        "desc": "Grants permission to enable detailed monitoring for a running instance",
+        "access": "Write"
+    },
+    {
+        "action": "MoveAddressToVpc",
+        "desc": "Grants permission to move an Elastic IP address from the EC2-Classic platform to the\n                                                EC2-VPC platform",
+        "access": "Write"
+    },
+    {
+        "action": "ProvisionByoipCidr",
+        "desc": "Grants permission to provision an address range for use in AWS through bring your\n                                                own IP addresses (BYOIP), and to create a corresponding address pool",
+        "access": "Write"
+    },
+    {
+        "action": "PurchaseHostReservation",
+        "desc": "Grants permission to purchase a reservation with configurations that match those of\n                                                a Dedicated Host",
+        "access": "Write"
+    },
+    {
+        "action": "PurchaseReservedInstancesOffering",
+        "desc": "Grants permission to purchase a Reserved Instance offering",
+        "access": "Write"
+    },
+    {
+        "action": "PurchaseScheduledInstances",
+        "desc": "Grants permission to purchase one or more Scheduled Instances with a specified schedule",
+        "access": "Write"
+    },
+    {
+        "action": "RebootInstances",
+        "desc": "Grants permission to request a reboot of one or more instances",
+        "access": "Write"
+    },
+    {
+        "action": "RegisterImage",
+        "desc": "Grants permission to register an Amazon Machine Image (AMI)",
+        "access": "Write"
+    },
+    {
+        "action": "RegisterInstanceEventNotificationAttributes",
+        "desc": "Grants permission to add tags to the set of tags to include in notifications about\n                                                scheduled events for your instances",
+        "access": "Write"
+    },
+    {
+        "action": "RegisterTransitGatewayMulticastGroupMembers",
+        "desc": "Grants permission to register one or more network interfaces as a member of a group\n                                                IP address in a transit gateway multicast domain",
+        "access": "Write"
+    },
+    {
+        "action": "RegisterTransitGatewayMulticastGroupSources",
+        "desc": "Grants permission to register one or more network interfaces as a source of a group\n                                                IP address in a transit gateway multicast domain",
+        "access": "Write"
+    },
+    {
+        "action": "RejectTransitGatewayMulticastDomainAssociations",
+        "desc": "Grants permission to reject requests to associate cross-account subnets with a transit\n                                                gateway multicast domain",
+        "access": "Write"
+    },
+    {
+        "action": "RejectTransitGatewayPeeringAttachment",
+        "desc": "Grants permission to reject a transit gateway peering attachment request",
+        "access": "Write"
+    },
+    {
+        "action": "RejectTransitGatewayVpcAttachment",
+        "desc": "Grants permission to reject a request to attach a VPC to a transit gateway",
+        "access": "Write"
+    },
+    {
+        "action": "RejectVpcEndpointConnections",
+        "desc": "Grants permission to reject one or more VPC endpoint connection requests to a VPC\n                                                endpoint service",
+        "access": "Write"
+    },
+    {
+        "action": "RejectVpcPeeringConnection",
+        "desc": "Grants permission to reject a VPC peering connection request",
+        "access": "Write"
+    },
+    {
+        "action": "ReleaseAddress",
+        "desc": "Grants permission to release an Elastic IP address",
+        "access": "Write"
+    },
+    {
+        "action": "ReleaseHosts",
+        "desc": "Grants permission to release one or more On-Demand Dedicated Hosts",
+        "access": "Write"
+    },
+    {
+        "action": "ReplaceIamInstanceProfileAssociation",
+        "desc": "Grants permission to replace an IAM instance profile for an instance",
+        "access": "Write"
+    },
+    {
+        "action": "ReplaceNetworkAclAssociation",
+        "desc": "Grants permission to change which network ACL a subnet is associated with",
+        "access": "Write"
+    },
+    {
+        "action": "ReplaceNetworkAclEntry",
+        "desc": "Grants permission to replace an entry (rule) in a network ACL",
+        "access": "Write"
+    },
+    {
+        "action": "ReplaceRoute",
+        "desc": "Grants permission to replace a route within a route table in a VPC",
+        "access": "Write"
+    },
+    {
+        "action": "ReplaceRouteTableAssociation",
+        "desc": "Grants permission to change the route table that is associated with a subnet",
+        "access": "Write"
+    },
+    {
+        "action": "ReplaceTransitGatewayRoute",
+        "desc": "Grants permission to replace a route in a transit gateway route table",
+        "access": "Write"
+    },
+    {
+        "action": "ReportInstanceStatus",
+        "desc": "Grants permission to submit feedback about the status of an instance",
+        "access": "Write"
+    },
+    {
+        "action": "RequestSpotFleet",
+        "desc": "Grants permission to create a Spot Fleet request",
+        "access": "Write"
+    },
+    {
+        "action": "RequestSpotInstances",
+        "desc": "Grants permission to create a Spot Instance request",
+        "access": "Write"
+    },
+    {
+        "action": "ResetAddressAttribute",
+        "desc": "Grants permission to reset the attribute of the specified IP address",
+        "access": "Write"
+    },
+    {
+        "action": "ResetEbsDefaultKmsKeyId",
+        "desc": "Grants permission to reset the default customer master key (CMK) for EBS encryption\n                                                for your account to use the AWS-managed CMK for EBS",
+        "access": "Write"
+    },
+    {
+        "action": "ResetFpgaImageAttribute",
+        "desc": "Grants permission to reset an attribute of an Amazon FPGA Image (AFI) to its default\n                                                value",
+        "access": "Write"
+    },
+    {
+        "action": "ResetImageAttribute",
+        "desc": "Grants permission to reset an attribute of an Amazon Machine Image (AMI) to its default\n                                                value",
+        "access": "Write"
+    },
+    {
+        "action": "ResetInstanceAttribute",
+        "desc": "Grants permission to reset an attribute of an instance to its default value",
+        "access": "Write"
+    },
+    {
+        "action": "ResetNetworkInterfaceAttribute",
+        "desc": "Grants permission to reset an attribute of a network interface",
+        "access": "Write"
+    },
+    {
+        "action": "ResetSnapshotAttribute",
+        "desc": "Grants permission to reset permission settings for a snapshot",
+        "access": "Permissions management"
+    },
+    {
+        "action": "RestoreAddressToClassic",
+        "desc": "Grants permission to restore an Elastic IP address that was previously moved to the\n                                                EC2-VPC platform back to the EC2-Classic platform",
+        "access": "Write"
+    },
+    {
+        "action": "RestoreManagedPrefixListVersion",
+        "desc": "Grants permission to restore the entries from a previous version of a managed prefix\n                                                list to a new version of the prefix list",
+        "access": "Write"
+    },
+    {
+        "action": "RevokeClientVpnIngress",
+        "desc": "Grants permission to remove an inbound authorization rule from a Client VPN endpoint",
+        "access": "Write"
+    },
+    {
+        "action": "RevokeSecurityGroupEgress",
+        "desc": "Grants permission to remove one or more outbound rules from a VPC security group",
+        "access": "Write"
+    },
+    {
+        "action": "RevokeSecurityGroupIngress",
+        "desc": "Grants permission to remove one or more inbound rules from a security group",
+        "access": "Write"
+    },
+    {
+        "action": "RunInstances",
+        "desc": "Grants permission to launch one or more instances",
+        "access": "Write"
+    },
+    {
+        "action": "RunScheduledInstances",
+        "desc": "Grants permission to launch one or more Scheduled Instances",
+        "access": "Write"
+    },
+    {
+        "action": "SearchLocalGatewayRoutes",
+        "desc": "Grants permission to search for routes in a local gateway route table",
+        "access": "List"
+    },
+    {
+        "action": "SearchTransitGatewayMulticastGroups",
+        "desc": "Grants permission to search for groups, sources, and members in a transit gateway\n                                                multicast domain",
+        "access": "List"
+    },
+    {
+        "action": "SearchTransitGatewayRoutes",
+        "desc": "Grants permission to search for routes in a transit gateway route table",
+        "access": "List"
+    },
+    {
+        "action": "SendDiagnosticInterrupt",
+        "desc": "Grants permission to send a diagnostic interrupt to an Amazon EC2 instance",
+        "access": "Write"
+    },
+    {
+        "action": "SendSpotInstanceInterruptions",
+        "desc": "Grants permission to interrupt a Spot Instance",
+        "access": "Write"
+    },
+    {
+        "action": "StartInstances",
+        "desc": "Grants permission to start a stopped instance",
+        "access": "Write"
+    },
+    {
+        "action": "StartNetworkInsightsAnalysis",
+        "desc": "Grants permission to start analyzing a specified path",
+        "access": "Write"
+    },
+    {
+        "action": "StartVpcEndpointServicePrivateDnsVerification",
+        "desc": "Grants permission to start the private DNS verification process for a VPC endpoint\n                                                service",
+        "access": "Write"
+    },
+    {
+        "action": "StopInstances",
+        "desc": "Grants permission to stop an Amazon EBS-backed instance",
+        "access": "Write"
+    },
+    {
+        "action": "TerminateClientVpnConnections",
+        "desc": "Grants permission to terminate active Client VPN endpoint connections",
+        "access": "Write"
+    },
+    {
+        "action": "TerminateInstances",
+        "desc": "Grants permission to shut down one or more instances",
+        "access": "Write"
+    },
+    {
+        "action": "UnassignIpv6Addresses",
+        "desc": "Grants permission to unassign one or more IPv6 addresses from a network interface",
+        "access": "Write"
+    },
+    {
+        "action": "UnassignPrivateIpAddresses",
+        "desc": "Grants permission to unassign one or more secondary private IP addresses from a network\n                                                interface",
+        "access": "Write"
+    },
+    {
+        "action": "UnmonitorInstances",
+        "desc": "Grants permission to disable detailed monitoring for a running instance",
+        "access": "Write"
+    },
+    {
+        "action": "UpdateSecurityGroupRuleDescriptionsEgress",
+        "desc": "Grants permission to update descriptions for one or more outbound rules in a VPC security\n                                                group",
+        "access": "Write"
+    },
+    {
+        "action": "UpdateSecurityGroupRuleDescriptionsIngress",
+        "desc": "Grants permission to update descriptions for one or more inbound rules in a security\n                                                group",
+        "access": "Write"
+    },
+    {
+        "action": "WithdrawByoipCidr",
+        "desc": "Grants permission to stop advertising an address range that was provisioned for use\n                                                in AWS through bring your own IP addresses (BYOIP)",
+        "access": "Write"
+    }
+]

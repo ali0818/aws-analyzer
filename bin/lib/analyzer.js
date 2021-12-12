@@ -80,11 +80,16 @@ const _analyzeRegionData = (region, regionDetailsMap) => {
     }
     console.log('\n');
 };
-//Analylze security groups
+/**
+ * Analyze security groups for a given instance
+ * @param SGs SecurityGroups
+ * @returns
+ */
 const _analyzeSecurityGroups = (SGs) => {
     //Map of all security groups for a port
     let portSGsMap = {};
     let totalOpenPotentialThreatPorts = [];
+    let securityGroupOpenThreatPortsMap = {};
     for (let i = 0; i < SGs.length; i++) {
         let sg = SGs[i];
         const { managedPorts, openPotentialThreatPorts } = _analyzeSecurityGroup(sg);

@@ -1,9 +1,10 @@
-import { DescribeFlowLogsCommand, DescribeFlowLogsCommandInput, DescribeVpcsCommandInput, FlowLog, SecurityGroup, SecurityGroupIdentifier, Vpc } from '@aws-sdk/client-ec2';
+import { DescribeFlowLogsCommand, DescribeFlowLogsCommandInput, DescribeKeyPairsCommand, DescribeNatGatewaysCommand, DescribeNatGatewaysCommandInput, DescribeNatGatewaysCommandOutput, DescribeNetworkAclsCommand, DescribeVpcsCommandInput, FlowLog, KeyPairInfo, NatGateway, paginateDescribeInstances, paginateDescribeNatGateways, paginateDescribeNetworkAcls, SecurityGroup, SecurityGroupIdentifier, Vpc } from '@aws-sdk/client-ec2';
 import {
     DescribeInstancesCommand, DescribeInstancesCommandInput,
     DescribeInstancesCommandOutput, EC2Client, Reservation,
     DescribeSecurityGroupsCommandInput, DescribeSecurityGroupsCommandOutput,
     DescribeSecurityGroupsCommand,
+    DescribeKeyPairsCommandInput, DescribeKeyPairsCommandOutput,
     DescribeVpcsCommand,
 } from '@aws-sdk/client-ec2';
 import { fromIni } from '@aws-sdk/credential-providers';
@@ -32,8 +33,66 @@ export class EC2Service {
             region: this.region,
             credentials: fromIni({
                 profile: this.profile
-            })
+            }),
+            endpoint: `https://ec2.${this.region}.amazonaws.com`
         });
+    }
+
+    async getAllNatGateways() {
+        try {
+            let natGateways: NatGateway[] = [];
+
+            const paginator = paginateDescribeNatGateways({
+                client: this.client,
+            }, {});
+
+            for await (const page of paginator) {
+                natGateways = natGateways.concat(page.NatGateways);
+            }
+
+            return natGateways;
+        } catch (error) {
+
+        }
+    }
+
+    async getAllKeyPairs() {
+        try {
+            let nextToken: string | undefined;
+            let keyPairs: KeyPairInfo[] = [];
+
+            let cmd = new DescribeKeyPairsCommand({
+
+            });
+            const res = await this.client.send(cmd);
+
+            keyPairs = res.KeyPairs
+            return keyPairs;
+        } catch (error) {
+
+        }
+    }
+
+    /**
+     * Get all network ACLS
+     */
+    async getAllNetworkACLs() {
+        try {
+            let networkACLs: SecurityGroup[] = [];
+
+            const paginator = paginateDescribeNetworkAcls({
+                client: this.client
+            }, {});
+
+            for await (const page of paginator) {
+                networkACLs = networkACLs.concat(page.NetworkAcls);
+            }
+
+            return networkACLs;
+        } catch (error) {
+            console.log(chalk.red(error));
+            throw error;
+        }
     }
 
     async describeInstances(nextToken?: string): Promise<DescribeInstancesCommandOutput> {
@@ -63,6 +122,14 @@ export class EC2Service {
         } catch (error) {
             console.log(chalk.red(error));
             throw error;
+        }
+    }
+
+    async getAllVPCs() {
+        try {
+
+        } catch (error) {
+
         }
     }
 
@@ -198,15 +265,16 @@ export class EC2Service {
         const spinner = new cliui.Spinner(`Getting all instances... for region ${this.region}`);
         try {
             spinner.start();
-            let nextToken: string | undefined;
-            let result: DescribeInstancesCommandOutput;
             let reservations: Reservation[] = [];
 
-            do {
-                result = await this.describeInstances(nextToken);
-                reservations = reservations.concat(result?.Reservations);
-                nextToken = result?.NextToken;
-            } while (nextToken);
+            const paginator = (paginateDescribeInstances({
+                client: this.client,
+                startingToken: undefined,
+            }, {}));
+
+            for await (const page of paginator) {
+                reservations.push(...page.Reservations);
+            }
 
             let instances = reservations.map(reservation => reservation.Instances).reduce((a, b) => a.concat(b), []);
             let groupsWithInstance: { groups: SecurityGroupIdentifier[], instance: string }[] = instances

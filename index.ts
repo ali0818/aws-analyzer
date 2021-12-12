@@ -6,6 +6,7 @@ import chalk from 'chalk';
 import yargs from 'yargs';
 import * as analyzer from './lib/analyzer';
 import { regions } from './lib/constants/regions';
+import { analyzeResources } from './lib/resource-analyzer';
 
 clear();
 console.log(
@@ -14,26 +15,38 @@ console.log(
     )
 );
 
+const baseArgs = () => {
+    return yargs
+        .demandOption('profile')
+        .options({
+            profile: {
+                alias: 'p',
+                describe: 'AWS profile to use',
+                type: 'string',
+                required: true
+            },
+            refreshcache: {
+                alias: 'r',
+                describe: 'Refresh cache',
+                type: 'boolean'
+            },
+        })
+}
 
 function processArgs() {
     const args: any = yargs(process.argv.slice(2))
-        .demandOption(['profile'])
-        .option('regions', {
-            alias: 'r',
-            describe: 'Regions to analyze',
-            type: 'array',
+        .command(['ec2', '$0'], 'analyze ec2 instances', () => { }, (argv) => {
+            console.log("RUNNING EC@");
+            runEC2(argv);
         })
-        .option('refreshcache', {
-            demandOption: false,
-            default: false,
-            alias: 'C',
-            describe: 'Refresh cache',
-            type: 'boolean',
-            boolean: true,
-            description: 'Refresh cache'
-        })
-        .default('profile', 'default')
-        .describe('profile', 'AWS profile to use')
+        .command('resources', 'Analyze iam resources',
+            () => {
+                return baseArgs()
+            },
+            (argv) => {
+                console.log("RUNNING RESOURCES");
+                runResources(argv);
+            })
         .usage('Usage: perusec2 --profile [profile] --regions [...regions]')
         .help('h')
         .alias('h', 'help')
@@ -42,13 +55,17 @@ function processArgs() {
     return args;
 }
 
-async function run() {
-    const args = processArgs();
+async function runResources(args) {
+    console.log(args);
 
-    if (!args.profile) {
-        console.log(chalk.red('No profile provided'));
-    }
+    const _regions = await _processRegions(args);
+    console.log(chalk.yellow(`Analyzing resources in regions: ${_regions}`));
+    //Run resource analyzer
+    analyzeResources(args.profile, _regions, args.refreshcache);
+}
 
+async function _processRegions(args) {
+    console.log(args);
     console.log(args.regions);
 
     let _regions = regions;
@@ -63,10 +80,26 @@ async function run() {
             })
     }
 
+    return _regions;
+}
+
+async function runEC2(args) {
+    console.log(args);
+
+    if (!args.profile) {
+        console.log(chalk.red('No profile provided'));
+    }
+
+    const _regions = await _processRegions(args);
+
     //Run analyzer
     analyzer.analyze(args.profile, _regions, args.refreshcache);
 
     console.log(chalk.green(`Using profile: ${args.profile}`));
+}
+
+function run() {
+    processArgs();
 }
 
 run();

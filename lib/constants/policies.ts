@@ -1,0 +1,1 @@
+export const ADMIN_POLICY = "arn:aws:iam::aws:policy/AdministratorAccess";
