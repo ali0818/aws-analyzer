@@ -28,12 +28,18 @@ export async function analyzeResources(profile: string, regions: string[], refre
         const user = await iamClient.getUser();
 
         let _cacheExists = await cacheExists(CACHE_FILE_NAME, profile);
+        let _treeCacheExists = await cacheExists(TREE_CACHE_FILE_NAME, profile);
         let details: any = {};
+        let treeDetails: any = {};
 
-        if (_cacheExists && !refreshCache) {
+        if (_treeCacheExists && _cacheExists && !refreshCache) {
             console.log(chalk.yellow('Using cached data'));
+
             const cache = await loadCache(CACHE_FILE_NAME, profile);
+            const treeCache = await loadCache(TREE_CACHE_FILE_NAME, profile);
             details = cache;
+            treeDetails = treeCache;
+
         } else {
             const policies = await iamClient.listAllPoliciesForUser(user);
 
@@ -51,10 +57,16 @@ export async function analyzeResources(profile: string, regions: string[], refre
             console.log(chalk.underline.green(`Therer are total {${totalResources.length}} resources in all the regions`));
 
             await saveCache(CACHE_FILE_NAME, details, profile);
-
-            await analyzeResourceAndPolicies(policies, profile, regions);
-
             console.log(chalk.yellow('Saved Policies data to cache'));
+
+            const mainTree = await analyzeResourceAndPolicies(policies, profile, regions);
+
+            await saveCache(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile);
+        }
+
+        return {
+            details,
+            comprehensive: treeDetails
         }
     } catch (error) {
         console.error(chalk.red(`Error: ${error.message}`));
@@ -119,7 +131,7 @@ const initializeRegionalResourceTaggingClients = (profile: string, regions: stri
                                 }
                         }
  */
-const analyzeResourceAndPolicies = async (policies, profile, regions) => {
+const analyzeResourceAndPolicies = async (policies, profile, regions): Promise<Tree> => {
     console.log(chalk.yellow('Analyzing Resources and policies'));
     console.log(chalk.yellow('This will create a resource structure tree for the current user'));
     let statements: any[] = [];
@@ -130,7 +142,7 @@ const analyzeResourceAndPolicies = async (policies, profile, regions) => {
 
     // Get all the statements from all the policies
     let spinner = new Spinner('Getting all the resources...');
-    
+
     try {
         const allResources = await resourceService.getAllResources();
 
@@ -155,7 +167,7 @@ const analyzeResourceAndPolicies = async (policies, profile, regions) => {
 
         //FOR S3
 
-        await saveCache(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile);
+        return mainTree;
     } catch (error) {
         console.error(chalk.red(error));
     } finally {

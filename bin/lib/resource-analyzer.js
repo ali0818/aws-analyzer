@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyzeResources = void 0;
 const chalk_1 = __importDefault(require("chalk"));
+const clui_1 = require("clui");
 const actions_list_1 = require("./actions-list");
 const policies_1 = require("./constants/policies");
 const regex_1 = require("./constants/regex");
@@ -20,11 +21,15 @@ async function analyzeResources(profile, regions, refreshCache) {
     try {
         const user = await iamClient.getUser();
         let _cacheExists = await (0, files_1.cacheExists)(CACHE_FILE_NAME, profile);
+        let _treeCacheExists = await (0, files_1.cacheExists)(TREE_CACHE_FILE_NAME, profile);
         let details = {};
-        if (_cacheExists && !refreshCache) {
+        let treeDetails = {};
+        if (_treeCacheExists && _cacheExists && !refreshCache) {
             console.log(chalk_1.default.yellow('Using cached data'));
             const cache = await (0, files_1.loadCache)(CACHE_FILE_NAME, profile);
+            const treeCache = await (0, files_1.loadCache)(TREE_CACHE_FILE_NAME, profile);
             details = cache;
+            treeDetails = treeCache;
         }
         else {
             const policies = await iamClient.listAllPoliciesForUser(user);
@@ -38,9 +43,14 @@ async function analyzeResources(profile, regions, refreshCache) {
             console.log(chalk_1.default.green('Got all the resources'));
             console.log(chalk_1.default.underline.green(`Therer are total {${totalResources.length}} resources in all the regions`));
             await (0, files_1.saveCache)(CACHE_FILE_NAME, details, profile);
-            await analyzeResourceAndPolicies(policies, profile, regions);
             console.log(chalk_1.default.yellow('Saved Policies data to cache'));
+            const mainTree = await analyzeResourceAndPolicies(policies, profile, regions);
+            await (0, files_1.saveCache)(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile);
         }
+        return {
+            details,
+            comprehensive: treeDetails
+        };
     }
     catch (error) {
         console.error(chalk_1.default.red(`Error: ${error.message}`));
@@ -95,28 +105,40 @@ const initializeRegionalResourceTaggingClients = (profile, regions) => {
                         }
  */
 const analyzeResourceAndPolicies = async (policies, profile, regions) => {
+    console.log(chalk_1.default.yellow('Analyzing Resources and policies'));
+    console.log(chalk_1.default.yellow('This will create a resource structure tree for the current user'));
     let statements = [];
     let isAdmin = false;
     const resourceService = new resource_service_1.ResourceService(profile, regions);
-    const allResources = await resourceService.getAllResources();
-    let mainTree = new graph_1.Tree('User', new graph_1.Node('User', true));
-    for (let i = 0; i < policies.length; i++) {
-        const policy = policies[i];
-        if (policy.PolicyArn == policies_1.ADMIN_POLICY) {
-            isAdmin = true;
-        }
-        for (let j = 0; j < policy.Document.Statement.length; j++) {
-            const statement = policy.Document.Statement[j];
-            if (statement.Effect == 'Allow') {
-                statements.push(statement);
+    // Get all the statements from all the policies
+    let spinner = new clui_1.Spinner('Getting all the resources...');
+    try {
+        const allResources = await resourceService.getAllResources();
+        let mainTree = new graph_1.Tree('User', new graph_1.Node('User', true));
+        for (let i = 0; i < policies.length; i++) {
+            const policy = policies[i];
+            if (policy.PolicyArn == policies_1.ADMIN_POLICY) {
+                isAdmin = true;
+            }
+            for (let j = 0; j < policy.Document.Statement.length; j++) {
+                const statement = policy.Document.Statement[j];
+                if (statement.Effect == 'Allow') {
+                    statements.push(statement);
+                }
             }
         }
+        //FOR EC2
+        const { ec2Subtree } = await analyzeEC2Resources(policies, allResources.ec2, statements, profile, regions);
+        mainTree.root.addChild(ec2Subtree.root);
+        //FOR S3
+        return mainTree;
     }
-    //FOR EC2
-    const { ec2Subtree } = await analyzeEC2Resources(policies, allResources.ec2, statements, profile, regions);
-    mainTree.root.addChild(ec2Subtree.root);
-    //FOR S3
-    await (0, files_1.saveCache)('resource-tree.json', { tree: mainTree.toJSON() }, profile);
+    catch (error) {
+        console.error(chalk_1.default.red(error));
+    }
+    finally {
+        spinner.stop();
+    }
 };
 /**
  * Analyze all EC2 resources in all the provided regions

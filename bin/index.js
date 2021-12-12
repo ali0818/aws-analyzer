@@ -23,6 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.runEC2 = exports.runResources = void 0;
 const clear_1 = __importDefault(require("clear"));
 const figlet_1 = __importDefault(require("figlet"));
 const chalk_1 = __importDefault(require("chalk"));
@@ -68,12 +69,19 @@ function processArgs() {
     return args;
 }
 async function runResources(args) {
-    console.log(args);
-    const _regions = await _processRegions(args);
-    console.log(chalk_1.default.yellow(`Analyzing resources in regions: ${_regions}`));
-    //Run resource analyzer
-    (0, resource_analyzer_1.analyzeResources)(args.profile, _regions, args.refreshcache);
+    try {
+        console.log(args);
+        const _regions = await _processRegions(args);
+        console.log(chalk_1.default.yellow(`Analyzing resources in regions: ${_regions}`));
+        //Run resource analyzer
+        let data = await (0, resource_analyzer_1.analyzeResources)(args.profile, _regions, args.refreshcache);
+        return data;
+    }
+    catch (err) {
+        console.error(err);
+    }
 }
+exports.runResources = runResources;
 async function _processRegions(args) {
     console.log(args);
     console.log(args.regions);
@@ -99,6 +107,7 @@ async function runEC2(args) {
     analyzer.analyze(args.profile, _regions, args.refreshcache);
     console.log(chalk_1.default.green(`Using profile: ${args.profile}`));
 }
+exports.runEC2 = runEC2;
 function run() {
     processArgs();
 }

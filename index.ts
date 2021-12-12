@@ -62,7 +62,9 @@ export async function runResources(args) {
         const _regions = await _processRegions(args);
         console.log(chalk.yellow(`Analyzing resources in regions: ${_regions}`));
         //Run resource analyzer
-        await analyzeResources(args.profile, _regions, args.refreshcache);
+        let data = await analyzeResources(args.profile, _regions, args.refreshcache);
+
+        return data;
     } catch (err) {
         console.error(err);
     }
