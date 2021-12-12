@@ -94,7 +94,7 @@ class EC2ResourceGetter extends ResourceGetter {
                 finally { if (e_1) throw e_1.error; }
             }
             regionVPCsMap[region] = _vpcs;
-            vpcs = vpcs.concat(_vpcs);
+            vpcs = vpcs.concat(..._vpcs);
         }
         return {
             all: vpcs,
@@ -123,8 +123,8 @@ class EC2ResourceGetter extends ResourceGetter {
                 }
                 finally { if (e_2) throw e_2.error; }
             }
-            regionInstancesMap[region] = _instances;
-            instances = instances.concat(_instances);
+            regionInstancesMap[region] = _instances.flat();
+            instances = instances.concat(..._instances);
         }
         return {
             all: instances,
@@ -154,7 +154,7 @@ class EC2ResourceGetter extends ResourceGetter {
                 finally { if (e_3) throw e_3.error; }
             }
             regionNatGatewaysMap[region] = _natGateways;
-            natGateways = natGateways.concat(_natGateways);
+            natGateways = natGateways.concat(..._natGateways);
         }
         return {
             all: natGateways,

@@ -55,13 +55,17 @@ function processArgs() {
     return args;
 }
 
-async function runResources(args) {
-    console.log(args);
+export async function runResources(args) {
+    try {
+        console.log(args);
 
-    const _regions = await _processRegions(args);
-    console.log(chalk.yellow(`Analyzing resources in regions: ${_regions}`));
-    //Run resource analyzer
-    analyzeResources(args.profile, _regions, args.refreshcache);
+        const _regions = await _processRegions(args);
+        console.log(chalk.yellow(`Analyzing resources in regions: ${_regions}`));
+        //Run resource analyzer
+        await analyzeResources(args.profile, _regions, args.refreshcache);
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 async function _processRegions(args) {
@@ -83,7 +87,7 @@ async function _processRegions(args) {
     return _regions;
 }
 
-async function runEC2(args) {
+export async function runEC2(args) {
     console.log(args);
 
     if (!args.profile) {

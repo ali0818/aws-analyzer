@@ -22,7 +22,9 @@ export const saveCache = async (filename: string, data, profile: string = 'defau
             fs.mkdirSync(`${CACHE_DIR}/${profile}`, { recursive: true });
         }
         const filePath = path.join(baseDir, CACHE_DIR, profile, filename);
+        
         console.log(chalk.green(`Saving cache to ${filePath}`));
+        
         await fs.promises.writeFile(filePath, JSON.stringify(data));
     } catch (error) {
         console.error(chalk.red(error));

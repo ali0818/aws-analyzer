@@ -1,7 +1,7 @@
 {
-  "name": "ec2-analyzer",
-  "version": "0.0.3",
-  "description": "Analyze EC2 instances from all regions",
+  "name": "aws-analyzer",
+  "version": "0.0.4",
+  "description": "Analyze AWS resources from all regions",
   "main": "index.js",
   "bin": {
     "perusec2": "bin/index.js"

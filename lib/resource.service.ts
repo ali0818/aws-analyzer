@@ -100,7 +100,7 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
             }
 
             regionVPCsMap[region] = _vpcs;
-            vpcs = vpcs.concat(_vpcs);
+            vpcs = vpcs.concat(..._vpcs);
         }
 
         return {
@@ -124,7 +124,7 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
                 _instances = _instances.concat(page.Reservations.map(reservation => reservation.Instances));
             }
 
-            regionInstancesMap[region] = _instances;
+            regionInstancesMap[region] = _instances.flat();
             instances = instances.concat(..._instances);
         }
 
@@ -149,7 +149,7 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
             }
 
             regionNatGatewaysMap[region] = _natGateways;
-            natGateways = natGateways.concat(_natGateways);
+            natGateways = natGateways.concat(..._natGateways);
         }
 
         return {
