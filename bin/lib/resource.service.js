@@ -12,8 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3ResourceGetter = exports.EC2ResourceGetter = exports.ResourceGetter = exports.ResourceService = void 0;
 const client_ec2_1 = require("@aws-sdk/client-ec2");
-const credential_providers_1 = require("@aws-sdk/credential-providers");
 const client_s3_1 = require("@aws-sdk/client-s3");
+const credential_providers_1 = require("@aws-sdk/credential-providers");
 const chalk_1 = __importDefault(require("chalk"));
 const RESOURCE_CLIENT_NAMES = [
     'ec2',

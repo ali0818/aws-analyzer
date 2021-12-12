@@ -1,10 +1,7 @@
-import { DescribeInstancesCommand, EC2Client, paginateDescribeInstances, paginateDescribeNatGateways, paginateDescribeVpcs } from "@aws-sdk/client-ec2";
-import { fromIni } from "@aws-sdk/credential-providers";
-import { EC2Service } from "./ec2.service";
+import { EC2Client, paginateDescribeInstances, paginateDescribeNatGateways, paginateDescribeVpcs } from "@aws-sdk/client-ec2";
 import { GetBucketAclCommand, GetBucketPolicyCommand, ListBucketsCommand, S3Client } from '@aws-sdk/client-s3';
-import { Client as IClient, Command, MetadataBearer, MiddlewareStack, RequestHandler } from "@aws-sdk/types";
+import { fromIni } from "@aws-sdk/credential-providers";
 import chalk from "chalk";
-import { Console } from "console";
 
 const RESOURCE_CLIENT_NAMES: string[] = [
     'ec2',

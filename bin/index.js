@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runEC2 = exports.runResources = exports.CACHE_DIR = void 0;
+exports.runEC2 = exports.runResources = exports.CACHE_DIR = exports.files = void 0;
 const clear_1 = __importDefault(require("clear"));
 const figlet_1 = __importDefault(require("figlet"));
 const chalk_1 = __importDefault(require("chalk"));
@@ -31,6 +31,7 @@ const yargs_1 = __importDefault(require("yargs"));
 const analyzer = __importStar(require("./lib/analyzer"));
 const regions_1 = require("./lib/constants/regions");
 const resource_analyzer_1 = require("./lib/resource-analyzer");
+exports.files = __importStar(require("./lib/files"));
 exports.CACHE_DIR = 'aws-resources-cache';
 (0, clear_1.default)();
 console.log(chalk_1.default.yellow(figlet_1.default.textSync('EC2 Analyzer', { horizontalLayout: 'full' })));

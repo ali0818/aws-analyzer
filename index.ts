@@ -8,6 +8,8 @@ import * as analyzer from './lib/analyzer';
 import { regions } from './lib/constants/regions';
 import { analyzeResources } from './lib/resource-analyzer';
 
+export * as files from './lib/files';
+
 export const CACHE_DIR = 'aws-resources-cache';
 
 clear();
