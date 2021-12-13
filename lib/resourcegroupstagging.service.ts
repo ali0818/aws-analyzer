@@ -35,8 +35,7 @@ export class ResourceGroupsTaggingService {
                 response = await this.client.send(command);
 
                 response.ResourceTagMappingList.forEach(resource => {
-                    console.log(resource.ResourceARN);
-                    console.log(resource.Tags);
+                    
                 });
 
                 resources.push(...response.ResourceTagMappingList);

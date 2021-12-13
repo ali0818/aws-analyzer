@@ -35,8 +35,6 @@ class ResourceGroupsTaggingService {
                 });
                 response = await this.client.send(command);
                 response.ResourceTagMappingList.forEach(resource => {
-                    console.log(resource.ResourceARN);
-                    console.log(resource.Tags);
                 });
                 resources.push(...response.ResourceTagMappingList);
             } while (response === null || response === void 0 ? void 0 : response.PaginationToken);

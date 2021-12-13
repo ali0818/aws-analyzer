@@ -355,6 +355,10 @@ const _getResourceDetailsFromResourceString = (resourceString: string) => {
 
     const matchResult = resourceString.match(ARN_REGEX);
 
+    if (!matchResult) {
+        throw new Error("Invalid resource string: " + resourceString);
+    }
+    
     const principal = matchResult[1];
     const region: string = matchResult[2];
     const resourceId = matchResult[5];

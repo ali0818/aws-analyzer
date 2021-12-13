@@ -2,6 +2,7 @@ dist/
 .vscode/
 node_modules/
 cache/
+aws-resources-cache/
 pnpm-lock.yaml
 package-lock.json
 yarn.lock

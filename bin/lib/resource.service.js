@@ -1,13 +1,9 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3ResourceGetter = exports.EC2ResourceGetter = exports.ResourceGetter = exports.ResourceService = void 0;
 const client_ec2_1 = require("@aws-sdk/client-ec2");
 const client_s3_1 = require("@aws-sdk/client-s3");
 const credential_providers_1 = require("@aws-sdk/credential-providers");
-const chalk_1 = __importDefault(require("chalk"));
 const RESOURCE_CLIENT_NAMES = [
     'ec2',
     'elb',
@@ -30,7 +26,7 @@ class ResourceService {
     async getAllResources() {
         return {
             ec2: await this.resourceGetters['ec2'].getAllResources(),
-            // s3: await this.resourceGetters['s3'].getAllResources()
+            s3: await this.resourceGetters['s3'].getAllResources()
         };
     }
 }
@@ -62,7 +58,27 @@ class EC2ResourceGetter extends ResourceGetter {
         return {
             vpc: await this.getAllVPCs(),
             instance: await this.getAllInstances(),
-            natgateway: await this.getAllNatGateways()
+            natgateway: await this.getAllNatGateways(),
+            securitygroup: await this.getAllSecurityGroups()
+        };
+    }
+    async getAllSecurityGroups() {
+        let securityGroups = [];
+        let regionSecurityGroupsMap = {};
+        for (let region of this.regions) {
+            const ec2 = this.clients[region];
+            const pager = (0, client_ec2_1.paginateDescribeSecurityGroups)({ client: ec2 }, {});
+            let _securityGroups = [];
+            for await (const page of pager) {
+                _securityGroups = _securityGroups.concat(page.SecurityGroups);
+            }
+            regionSecurityGroupsMap[region] = _securityGroups;
+            securityGroups = securityGroups.concat(..._securityGroups);
+        }
+        return {
+            all: securityGroups,
+            regionMap: regionSecurityGroupsMap,
+            metadata: { primaryKey: 'GroupId' }
         };
     }
     async getAllVPCs() {
@@ -144,24 +160,22 @@ class S3ResourceGetter extends ResourceGetter {
             let res = await s3.send(cmd);
             for (let i = 0; i < res.Buckets.length; i++) {
                 const bucket = res.Buckets[i];
-                try {
-                    let cmd = new client_s3_1.GetBucketAclCommand({ Bucket: bucket.Name });
-                    let aclResponse = await s3.send(cmd);
-                    bucket['ACL'] = { Grants: aclResponse.Grants, Owner: aclResponse.Owner };
-                }
-                catch (err) {
-                    console.log(chalk_1.default.red(`Error while getting ACL for bucket ${bucket.Name}`));
-                    console.error(err);
-                }
-                try {
-                    let policyCmd = new client_s3_1.GetBucketPolicyCommand({ Bucket: bucket.Name });
-                    let policyResponse = await s3.send(policyCmd);
-                    bucket['Policy'] = policyResponse.Policy;
-                }
-                catch (error) {
-                    console.log(chalk_1.default.red(`Error while getting policy for bucket ${bucket.Name}`));
-                    console.log(error);
-                }
+                // try {
+                //     let cmd = new GetBucketAclCommand({ Bucket: bucket.Name });
+                //     let aclResponse = await s3.send(cmd);
+                //     bucket['ACL'] = { Grants: aclResponse.Grants, Owner: aclResponse.Owner };
+                // } catch (err) {
+                //     console.log(chalk.red(`Error while getting ACL for bucket ${bucket.Name}`));
+                //     console.error(err)
+                // }
+                // try {
+                //     let policyCmd = new GetBucketPolicyCommand({ Bucket: bucket.Name });
+                //     let policyResponse = await s3.send(policyCmd);
+                //     bucket['Policy'] = policyResponse.Policy;
+                // } catch (error) {
+                //     console.log(chalk.red(`Error while getting policy for bucket ${bucket.Name}`));
+                //     console.log(error);
+                // }
                 buckets.push(bucket);
             }
             regionBucketsMap[region] = buckets;

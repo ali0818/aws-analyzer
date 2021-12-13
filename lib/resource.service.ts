@@ -1,4 +1,4 @@
-import { EC2Client, paginateDescribeInstances, paginateDescribeNatGateways, paginateDescribeVpcs } from "@aws-sdk/client-ec2";
+import { EC2Client, paginateDescribeInstances, paginateDescribeNatGateways, paginateDescribeSecurityGroups, paginateDescribeVpcs } from "@aws-sdk/client-ec2";
 import { GetBucketAclCommand, GetBucketPolicyCommand, ListBucketsCommand, S3Client } from '@aws-sdk/client-s3';
 import { fromIni } from "@aws-sdk/credential-providers";
 import chalk from "chalk";
@@ -38,7 +38,7 @@ export class ResourceService {
     async getAllResources() {
         return {
             ec2: await this.resourceGetters['ec2'].getAllResources(),
-            // s3: await this.resourceGetters['s3'].getAllResources()
+            s3: await this.resourceGetters['s3'].getAllResources()
         }
     }
 }
@@ -79,7 +79,32 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
         return {
             vpc: await this.getAllVPCs(),
             instance: await this.getAllInstances(),
-            natgateway: await this.getAllNatGateways()
+            natgateway: await this.getAllNatGateways(),
+            securitygroup: await this.getAllSecurityGroups()
+        }
+    }
+
+    async getAllSecurityGroups(): Promise<ResourceTypeReturnType> {
+        let securityGroups = [];
+        let regionSecurityGroupsMap = {};
+
+        for (let region of this.regions) {
+            const ec2 = this.clients[region];
+            const pager = paginateDescribeSecurityGroups({ client: ec2 }, {});
+            let _securityGroups = [];
+
+            for await (const page of pager) {                
+                _securityGroups = _securityGroups.concat(page.SecurityGroups);
+            }
+
+            regionSecurityGroupsMap[region] = _securityGroups;
+            securityGroups = securityGroups.concat(..._securityGroups);
+        }
+
+        return {
+            all: securityGroups,
+            regionMap: regionSecurityGroupsMap,
+            metadata: { primaryKey: 'GroupId' }
         }
     }
 
@@ -182,24 +207,24 @@ export class S3ResourceGetter<T> extends ResourceGetter<T> implements IResourceG
 
             for (let i = 0; i < res.Buckets.length; i++) {
                 const bucket = res.Buckets[i];
-                try {
-                    let cmd = new GetBucketAclCommand({ Bucket: bucket.Name });
-                    let aclResponse = await s3.send(cmd);
-                    bucket['ACL'] = { Grants: aclResponse.Grants, Owner: aclResponse.Owner };
-                } catch (err) {
-                    console.log(chalk.red(`Error while getting ACL for bucket ${bucket.Name}`));
-                    console.error(err)
-                }
+                // try {
+                //     let cmd = new GetBucketAclCommand({ Bucket: bucket.Name });
+                //     let aclResponse = await s3.send(cmd);
+                //     bucket['ACL'] = { Grants: aclResponse.Grants, Owner: aclResponse.Owner };
+                // } catch (err) {
+                //     console.log(chalk.red(`Error while getting ACL for bucket ${bucket.Name}`));
+                //     console.error(err)
+                // }
 
-                try {
-                    let policyCmd = new GetBucketPolicyCommand({ Bucket: bucket.Name });
-                    let policyResponse = await s3.send(policyCmd);
+                // try {
+                //     let policyCmd = new GetBucketPolicyCommand({ Bucket: bucket.Name });
+                //     let policyResponse = await s3.send(policyCmd);
 
-                    bucket['Policy'] = policyResponse.Policy;
-                } catch (error) {
-                    console.log(chalk.red(`Error while getting policy for bucket ${bucket.Name}`));
-                    console.log(error);
-                }
+                //     bucket['Policy'] = policyResponse.Policy;
+                // } catch (error) {
+                //     console.log(chalk.red(`Error while getting policy for bucket ${bucket.Name}`));
+                //     console.log(error);
+                // }
 
                 buckets.push(bucket);
             }
