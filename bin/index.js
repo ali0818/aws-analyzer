@@ -59,7 +59,7 @@ const baseArgs = () => {
 };
 function processArgs() {
     const args = (0, yargs_1.default)(process.argv.slice(2))
-        .command(['ec2', '$0'], 'analyze ec2 instances', () => { }, (argv) => {
+        .command(['ec2'], 'analyze ec2 instances', () => { }, (argv) => {
         console.log("RUNNING EC@");
         runEC2(argv);
     })
