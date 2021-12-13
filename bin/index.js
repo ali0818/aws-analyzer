@@ -42,7 +42,7 @@ const baseArgs = () => {
         cachedir: {
             alias: 'c',
             describe: 'Directory to cache data',
-            default: './cache'
+            default: exports.CACHE_DIR
         },
         profile: {
             alias: 'p',

@@ -26,7 +26,7 @@ const baseArgs = () => {
             cachedir: {
                 alias: 'c',
                 describe: 'Directory to cache data',
-                default: './cache'
+                default: CACHE_DIR
             },
             profile: {
                 alias: 'p',
