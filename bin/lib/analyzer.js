@@ -23,7 +23,9 @@ const analyze = async (profile, regions, refreshCache) => {
     if (_cacheExists && !refreshCache) {
         console.log(chalk_1.default.yellow("Cache found, Using cached data"));
         const cache = await (0, files_1.loadCache)(CACHE_FILE_NAME, profile);
-        regionEC2DetailsMap = Object.assign({}, cache);
+        regionEC2DetailsMap = {
+            ...cache
+        };
     }
     else {
         //Else fetch data from all regions

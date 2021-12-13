@@ -1,11 +1,4 @@
 "use strict";
-var __asyncValues = (this && this.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -73,25 +66,14 @@ class EC2ResourceGetter extends ResourceGetter {
         };
     }
     async getAllVPCs() {
-        var e_1, _a;
         let vpcs = [];
         let regionVPCsMap = {};
         for (let region of this.regions) {
             const ec2 = this.clients[region];
             const pager = (0, client_ec2_1.paginateDescribeVpcs)({ client: ec2 }, {});
             let _vpcs = [];
-            try {
-                for (var pager_1 = (e_1 = void 0, __asyncValues(pager)), pager_1_1; pager_1_1 = await pager_1.next(), !pager_1_1.done;) {
-                    const page = pager_1_1.value;
-                    _vpcs.push(...page.Vpcs);
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (pager_1_1 && !pager_1_1.done && (_a = pager_1.return)) await _a.call(pager_1);
-                }
-                finally { if (e_1) throw e_1.error; }
+            for await (const page of pager) {
+                _vpcs.push(...page.Vpcs);
             }
             regionVPCsMap[region] = _vpcs;
             vpcs = vpcs.concat(..._vpcs);
@@ -103,25 +85,14 @@ class EC2ResourceGetter extends ResourceGetter {
         };
     }
     async getAllInstances() {
-        var e_2, _a;
         let instances = [];
         let regionInstancesMap = {};
         for (let region of this.regions) {
             const ec2 = this.clients[region];
             const pager = (0, client_ec2_1.paginateDescribeInstances)({ client: ec2 }, {});
             let _instances = [];
-            try {
-                for (var pager_2 = (e_2 = void 0, __asyncValues(pager)), pager_2_1; pager_2_1 = await pager_2.next(), !pager_2_1.done;) {
-                    const page = pager_2_1.value;
-                    _instances = _instances.concat(page.Reservations.map(reservation => reservation.Instances));
-                }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (pager_2_1 && !pager_2_1.done && (_a = pager_2.return)) await _a.call(pager_2);
-                }
-                finally { if (e_2) throw e_2.error; }
+            for await (const page of pager) {
+                _instances = _instances.concat(page.Reservations.map(reservation => reservation.Instances));
             }
             regionInstancesMap[region] = _instances.flat();
             instances = instances.concat(..._instances);
@@ -133,25 +104,14 @@ class EC2ResourceGetter extends ResourceGetter {
         };
     }
     async getAllNatGateways() {
-        var e_3, _a;
         let natGateways = [];
         let regionNatGatewaysMap = {};
         for (let region of this.regions) {
             const ec2 = this.clients[region];
             const pager = (0, client_ec2_1.paginateDescribeNatGateways)({ client: ec2 }, {});
             let _natGateways = [];
-            try {
-                for (var pager_3 = (e_3 = void 0, __asyncValues(pager)), pager_3_1; pager_3_1 = await pager_3.next(), !pager_3_1.done;) {
-                    const page = pager_3_1.value;
-                    _natGateways = _natGateways.concat(page.NatGateways);
-                }
-            }
-            catch (e_3_1) { e_3 = { error: e_3_1 }; }
-            finally {
-                try {
-                    if (pager_3_1 && !pager_3_1.done && (_a = pager_3.return)) await _a.call(pager_3);
-                }
-                finally { if (e_3) throw e_3.error; }
+            for await (const page of pager) {
+                _natGateways = _natGateways.concat(page.NatGateways);
             }
             regionNatGatewaysMap[region] = _natGateways;
             natGateways = natGateways.concat(..._natGateways);

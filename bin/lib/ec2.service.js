@@ -1,11 +1,4 @@
 "use strict";
-var __asyncValues = (this && this.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -33,24 +26,13 @@ class EC2Service {
         });
     }
     async getAllNatGateways() {
-        var e_1, _a;
         try {
             let natGateways = [];
             const paginator = (0, client_ec2_1.paginateDescribeNatGateways)({
                 client: this.client,
             }, {});
-            try {
-                for (var paginator_1 = __asyncValues(paginator), paginator_1_1; paginator_1_1 = await paginator_1.next(), !paginator_1_1.done;) {
-                    const page = paginator_1_1.value;
-                    natGateways = natGateways.concat(page.NatGateways);
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (paginator_1_1 && !paginator_1_1.done && (_a = paginator_1.return)) await _a.call(paginator_1);
-                }
-                finally { if (e_1) throw e_1.error; }
+            for await (const page of paginator) {
+                natGateways = natGateways.concat(page.NatGateways);
             }
             return natGateways;
         }
@@ -73,24 +55,13 @@ class EC2Service {
      * Get all network ACLS
      */
     async getAllNetworkACLs() {
-        var e_2, _a;
         try {
             let networkACLs = [];
             const paginator = (0, client_ec2_1.paginateDescribeNetworkAcls)({
                 client: this.client
             }, {});
-            try {
-                for (var paginator_2 = __asyncValues(paginator), paginator_2_1; paginator_2_1 = await paginator_2.next(), !paginator_2_1.done;) {
-                    const page = paginator_2_1.value;
-                    networkACLs = networkACLs.concat(page.NetworkAcls);
-                }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (paginator_2_1 && !paginator_2_1.done && (_a = paginator_2.return)) await _a.call(paginator_2);
-                }
-                finally { if (e_2) throw e_2.error; }
+            for await (const page of paginator) {
+                networkACLs = networkACLs.concat(page.NetworkAcls);
             }
             return networkACLs;
         }
@@ -240,7 +211,6 @@ class EC2Service {
      * @returns {Promise<DescribeInstancesCommandOutput>}
      */
     async getAllInstances() {
-        var e_3, _a;
         const spinner = new clui_1.default.Spinner(`Getting all instances... for region ${this.region}`);
         try {
             spinner.start();
@@ -249,18 +219,8 @@ class EC2Service {
                 client: this.client,
                 startingToken: undefined,
             }, {}));
-            try {
-                for (var paginator_3 = __asyncValues(paginator), paginator_3_1; paginator_3_1 = await paginator_3.next(), !paginator_3_1.done;) {
-                    const page = paginator_3_1.value;
-                    reservations.push(...page.Reservations);
-                }
-            }
-            catch (e_3_1) { e_3 = { error: e_3_1 }; }
-            finally {
-                try {
-                    if (paginator_3_1 && !paginator_3_1.done && (_a = paginator_3.return)) await _a.call(paginator_3);
-                }
-                finally { if (e_3) throw e_3.error; }
+            for await (const page of paginator) {
+                reservations.push(...page.Reservations);
             }
             let instances = reservations.map(reservation => reservation.Instances).reduce((a, b) => a.concat(b), []);
             let groupsWithInstance = instances
