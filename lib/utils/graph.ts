@@ -1,3 +1,5 @@
+import * as uuid from 'uuid';
+
 export class Tree {
     constructor(public name: string, root?: Node) { if (root) this.root = root; }
 
@@ -18,9 +20,11 @@ export class Tree {
 export class Node {
     parent: Node;
     isRoot: boolean = false;
-
+    id: string;
     public children: Node[] = [];
-    constructor(public name: string, public details?: any) { }
+    constructor(public name: string, public details?: any) {
+        this.id = uuid.v4();
+    }
 
     addChild(child: Node, isRoot?: boolean) {
         this.children.push(child);
@@ -33,7 +37,8 @@ export class Node {
         for (var i = 0; i < this.children.length; i++) {
             children.push(this.children[i].toJSON());
         }
-        return { name: this.name, details: this.details, children: children };
+
+        return { id: this.id, name: this.name, details: this.details, children: children, parent: this.parent ? this.parent.id : '' };
     }
 
     //Get the node which has the given name
