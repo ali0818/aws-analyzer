@@ -109,12 +109,18 @@ const analyzeResourceAndPolicies = async (policies, profile, regions) => {
     console.log(chalk_1.default.yellow('This will create a resource structure tree for the current user'));
     let statements = [];
     let isAdmin = false;
+    const iamClient = new iam_service_1.IamService(profile);
     const resourceService = new resource_service_1.ResourceService(profile, regions);
     // Get all the statements from all the policies
     let spinner = new clui_1.Spinner('Getting all the resources...');
+    const user = await iamClient.getUser();
     try {
         const allResources = await resourceService.getAllResources();
-        let mainTree = new graph_1.Tree('User', new graph_1.Node('User', true));
+        let mainTree = new graph_1.Tree('User', new graph_1.Node('User', {
+            type: 'user',
+            userName: user.UserName,
+            userId: user.UserId,
+        }));
         for (let i = 0; i < policies.length; i++) {
             const policy = policies[i];
             if (policy.PolicyArn == policies_1.ADMIN_POLICY) {
@@ -153,7 +159,10 @@ const analyzeEC2Resources = async (policies, resources, statements, profile, reg
     const ec2Resources = resources;
     //Resource Types to look for in whole aws account for EC2
     const relevantResourceTypes = ['instance', 'natgateway', 'vpc'];
-    let subTree = new graph_1.Tree('EC2', new graph_1.Node('EC2', true));
+    let subTree = new graph_1.Tree('EC2', new graph_1.Node('EC2', {
+        type: 'service',
+        service: 'EC2',
+    }));
     regions.forEach(region => {
         let node = new graph_1.Node(region);
         relevantResourceTypes.forEach(resourceType => {
@@ -208,14 +217,14 @@ const analyzeEC2Resources = async (policies, resources, statements, profile, reg
                         if (!relevantResources[resourceType]) {
                             relevantResources[resourceType] = [];
                         }
-                        _generateResourceMapForResourceType(_resource, resourceType, ec2Resources, relevantResources, regions, subTree);
+                        _generateResourceMapForResourceType(_resource, resourceType, ec2Resources, relevantResources, regions, subTree, statements);
                     });
                     break;
                 }
                 case 'instance':
                 case 'vpc':
                 case 'natgateway':
-                    _generateResourceMapForResourceType(_resource, resourceType, ec2Resources, relevantResources, regions, subTree);
+                    _generateResourceMapForResourceType(_resource, resourceType, ec2Resources, relevantResources, regions, subTree, statements);
                     break;
                 default:
                     break;
@@ -223,6 +232,29 @@ const analyzeEC2Resources = async (policies, resources, statements, profile, reg
         }
     }
     return { ec2Subtree: subTree };
+};
+const _generateTooltipForResource = (resource, resourceType, resourceId, region) => {
+    switch (resourceType) {
+        case 'instance': {
+            return {
+                title: 'Instance',
+                instanceId: resource.InstanceId,
+                instanceType: resource.InstanceType,
+                imageId: resource.ImageId,
+                az: resource.Placement.AvailabilityZone,
+                publicIp: resource.PublicIpAddress,
+                privateIp: resource.PrivateIpAddress,
+                status: resource.Status
+            };
+        }
+        case 'vpc': {
+            return {
+                title: 'VPC',
+                vpcId: resource.VpcId,
+                state: resource.State,
+            };
+        }
+    }
 };
 /**
  * Generates a resource map and a tree node for a resource string and resource Type
@@ -232,7 +264,7 @@ const analyzeEC2Resources = async (policies, resources, statements, profile, reg
  * @param regions all the regions to look for resources in
  * @param subTree a subTree to cultivate
  */
-const _generateResourceMapForResourceType = (resourceString, resourceType, serviceResources, relevantResources, regions, subTree) => {
+const _generateResourceMapForResourceType = (resourceString, resourceType, serviceResources, relevantResources, regions, subTree, statements) => {
     const { region, resourceId, } = _getResourceDetailsFromResourceString(resourceString);
     relevantResources[resourceType].push(resourceId);
     if (region == '' || region == '*') {
@@ -249,11 +281,18 @@ const _generateResourceMapForResourceType = (resourceString, resourceType, servi
                 throw new Error("Node not found for region: " + region);
             }
             let { resources, type, primaryKey } = getResourcesFromResourceString(resourceString, serviceResources, region, resourceType);
-            resources.forEach(r => {
+            for (let i = 0; i < resources.length; i++) {
+                const r = resources[i];
+                let access = evaluateResourceAccessFromStatements(statements, r, resourceType);
                 if (!node.parent.getChildByName(r[primaryKey])) {
-                    node.addChild(new graph_1.Node(r[primaryKey], { type: type, resource: r, region: region }));
+                    node.addChild(new graph_1.Node(r[primaryKey], {
+                        type: type,
+                        resource: r,
+                        info: _generateTooltipForResource(r, resourceType, r[primaryKey], region),
+                        region: region
+                    }));
                 }
-            });
+            }
         });
     }
     else {
@@ -265,7 +304,12 @@ const _generateResourceMapForResourceType = (resourceString, resourceType, servi
         }
         resources.forEach(r => {
             if (!node.parent.getChildByName(r[primaryKey])) {
-                node.addChild(new graph_1.Node(r[primaryKey], { type: type, resource: r, region: r }));
+                node.addChild(new graph_1.Node(r[primaryKey], {
+                    type: type,
+                    resource: r,
+                    region: r,
+                    info: _generateTooltipForResource(r, resourceType, r[primaryKey], region)
+                }));
             }
         });
     }
@@ -379,7 +423,7 @@ const evaluateResourceAccessFromStatements = (statements, resourceType, resource
     ///Get detailed actions from ec2-actions.json file and filter the actions which are 
     ///present in policies and statements 
     const allEc2ActionsDetailed = (0, actions_list_1.getActions)('ec2').actions.filter(action => {
-        return ec2Actions.includes(action.toLowerCase()) || action == '*';
+        return ec2Actions.includes(action.action.toLowerCase()) || action == '*';
     });
     let relevantActionPredicate = '';
     let accessType = 'None';
@@ -401,7 +445,7 @@ const evaluateResourceAccessFromStatements = (statements, resourceType, resource
             break;
         }
     }
-    let permissions = { 'Write': [], 'Read': [], List: [], 'None': [] };
+    let permissions = { 'Write': [], 'Read': [], List: [], 'None': [], Tagging: [] };
     relevantActions = allEc2ActionsDetailed
         .filter(action => {
         permissions[action.access] = permissions[action.access].concat(action.actions);
