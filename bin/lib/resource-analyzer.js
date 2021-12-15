@@ -116,7 +116,7 @@ const analyzeResourceAndPolicies = async (policies, profile, regions) => {
     const user = await iamClient.getUser();
     try {
         const allResources = await resourceService.getAllResources();
-        let mainTree = new graph_1.Tree(user.UserName, new graph_1.Node('User', {
+        let mainTree = new graph_1.Tree("User", new graph_1.Node(user.UserName, {
             type: 'user',
             userName: user.UserName,
             userId: user.UserId,

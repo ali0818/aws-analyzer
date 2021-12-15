@@ -150,7 +150,7 @@ const analyzeResourceAndPolicies = async (policies, profile, regions): Promise<T
     try {
         const allResources = await resourceService.getAllResources();
 
-        let mainTree = new Tree(user.UserName, new Node('User', {
+        let mainTree = new Tree("User", new Node(user.UserName, {
             type: 'user',
             userName: user.UserName,
             userId: user.UserId,
