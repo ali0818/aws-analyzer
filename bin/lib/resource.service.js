@@ -8,7 +8,6 @@ const client_ec2_1 = require("@aws-sdk/client-ec2");
 const client_s3_1 = require("@aws-sdk/client-s3");
 const credential_providers_1 = require("@aws-sdk/credential-providers");
 const chalk_1 = __importDefault(require("chalk"));
-const clui_1 = require("clui");
 const RESOURCE_CLIENT_NAMES = [
     'ec2',
     'elb',
@@ -71,6 +70,7 @@ class EC2ResourceGetter extends ResourceGetter {
     async getAllSecurityGroups() {
         let securityGroups = [];
         let regionSecurityGroupsMap = {};
+        console.log(chalk_1.default.yellow('\nGetting all Security Groups...\n'));
         for (let region of this.regions) {
             const ec2 = this.clients[region];
             const pager = (0, client_ec2_1.paginateDescribeSecurityGroups)({ client: ec2 }, {});
@@ -81,6 +81,7 @@ class EC2ResourceGetter extends ResourceGetter {
             regionSecurityGroupsMap[region] = _securityGroups;
             securityGroups = securityGroups.concat(..._securityGroups);
         }
+        console.log(chalk_1.default.yellow('\Got all Security Groups...\n'));
         return {
             all: securityGroups,
             regionMap: regionSecurityGroupsMap,
@@ -90,8 +91,7 @@ class EC2ResourceGetter extends ResourceGetter {
     async getAllVPCs() {
         let vpcs = [];
         let regionVPCsMap = {};
-        const spinner = new clui_1.Spinner('\nGetting all VPCs...\n');
-        spinner.start();
+        console.log(chalk_1.default.yellow('\nGetting all VPCs...\n'));
         try {
             for (let region of this.regions) {
                 const ec2 = this.clients[region];
@@ -108,7 +108,7 @@ class EC2ResourceGetter extends ResourceGetter {
             console.error(chalk_1.default.red(error));
         }
         finally {
-            spinner.stop();
+            console.log(chalk_1.default.yellow('\nGot all VPCs...\n'));
         }
         return {
             all: vpcs,
@@ -119,8 +119,7 @@ class EC2ResourceGetter extends ResourceGetter {
     async getAllInstances() {
         let instances = [];
         let regionInstancesMap = {};
-        const spinner = new clui_1.Spinner('\nGetting all Instances...\n');
-        spinner.start();
+        console.log(chalk_1.default.yellow('\nGetting all Instances...\n'));
         try {
             for (let region of this.regions) {
                 const ec2 = this.clients[region];
@@ -137,7 +136,7 @@ class EC2ResourceGetter extends ResourceGetter {
             console.error(chalk_1.default.red(error));
         }
         finally {
-            spinner.stop();
+            console.log(chalk_1.default.yellow('\nGot all Instances...\n'));
         }
         return {
             all: instances,
@@ -148,8 +147,7 @@ class EC2ResourceGetter extends ResourceGetter {
     async getAllNatGateways() {
         let natGateways = [];
         let regionNatGatewaysMap = {};
-        const spinner = new clui_1.Spinner('\nGetting all NatGateways...\n');
-        spinner.start();
+        console.log(chalk_1.default.yellow('\nGetting all Nat Gateways...\n'));
         try {
             for (let region of this.regions) {
                 const ec2 = this.clients[region];
@@ -166,7 +164,7 @@ class EC2ResourceGetter extends ResourceGetter {
             console.error(chalk_1.default.red(error));
         }
         finally {
-            spinner.stop();
+            console.log(chalk_1.default.yellow('\nGot all Nat Gateways...\n'));
         }
         return {
             all: natGateways,
@@ -191,8 +189,7 @@ class S3ResourceGetter extends ResourceGetter {
     async getAllBuckets() {
         let buckets = [];
         let regionBucketsMap = {};
-        const spinner = new clui_1.Spinner('\nGetting all Buckets...\n');
-        spinner.start();
+        console.log(chalk_1.default.blue('\nGetting all S3 buckets...\n'));
         try {
             for (let region of this.regions) {
                 const s3 = this.clients[region];
@@ -225,7 +222,7 @@ class S3ResourceGetter extends ResourceGetter {
             console.error(chalk_1.default.red(error));
         }
         finally {
-            spinner.stop();
+            console.log(chalk_1.default.blue('\nDone getting all S3 buckets...\n'));
         }
         return { all: buckets, regionMap: regionBucketsMap, metadata: { primaryKey: 'Name' } };
     }

@@ -91,6 +91,8 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
         let securityGroups = [];
         let regionSecurityGroupsMap = {};
 
+        console.log(chalk.yellow('\nGetting all Security Groups...\n'));
+
         for (let region of this.regions) {
             const ec2 = this.clients[region];
             const pager = paginateDescribeSecurityGroups({ client: ec2 }, {});
@@ -104,6 +106,8 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
             securityGroups = securityGroups.concat(..._securityGroups);
         }
 
+        console.log(chalk.yellow('\Got all Security Groups...\n'));
+
         return {
             all: securityGroups,
             regionMap: regionSecurityGroupsMap,
@@ -114,9 +118,8 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
     async getAllVPCs(): Promise<ResourceTypeReturnType> {
         let vpcs = [];
         let regionVPCsMap = {};
-        const spinner = new Spinner('\nGetting all VPCs...\n');
 
-        spinner.start();
+        console.log(chalk.yellow('\nGetting all VPCs...\n'));
 
         try {
             for (let region of this.regions) {
@@ -134,7 +137,7 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
         } catch (error) {
             console.error(chalk.red(error));
         } finally {
-            spinner.stop();
+            console.log(chalk.yellow('\nGot all VPCs...\n'));
         }
 
         return {
@@ -148,8 +151,7 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
         let instances = [];
         let regionInstancesMap = {};
 
-        const spinner = new Spinner('\nGetting all Instances...\n');
-        spinner.start();
+        console.log(chalk.yellow('\nGetting all Instances...\n'));
 
         try {
             for (let region of this.regions) {
@@ -169,7 +171,7 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
         } catch (error) {
             console.error(chalk.red(error));
         } finally {
-            spinner.stop()
+            console.log(chalk.yellow('\nGot all Instances...\n'));
         }
         return {
             all: instances,
@@ -182,8 +184,7 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
         let natGateways = [];
         let regionNatGatewaysMap = {};
 
-        const spinner = new Spinner('\nGetting all NatGateways...\n');
-        spinner.start();
+        console.log(chalk.yellow('\nGetting all Nat Gateways...\n'));
 
 
         try {
@@ -202,7 +203,7 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
         } catch (error) {
             console.error(chalk.red(error));
         } finally {
-            spinner.stop();
+            console.log(chalk.yellow('\nGot all Nat Gateways...\n'));
         }
 
         return {
@@ -231,8 +232,7 @@ export class S3ResourceGetter<T> extends ResourceGetter<T> implements IResourceG
         let buckets = [];
         let regionBucketsMap = {};
 
-        const spinner = new Spinner('\nGetting all Buckets...\n');
-        spinner.start();
+        console.log(chalk.blue('\nGetting all S3 buckets...\n'));
 
         try {
             for (let region of this.regions) {
@@ -271,7 +271,7 @@ export class S3ResourceGetter<T> extends ResourceGetter<T> implements IResourceG
         } catch (error) {
             console.error(chalk.red(error));
         } finally {
-            spinner.stop();
+            console.log(chalk.blue('\nDone getting all S3 buckets...\n'));
         }
 
         return { all: buckets, regionMap: regionBucketsMap, metadata: { primaryKey: 'Name' } };
