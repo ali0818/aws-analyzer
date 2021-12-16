@@ -137,6 +137,8 @@ const analyzeResourceAndPolicies = async (policies, profile, regions) => {
         const { ec2Subtree } = await analyzeEC2Resources(policies, allResources.ec2, statements, profile, regions);
         mainTree.root.addChild(ec2Subtree.root);
         //FOR S3
+        console.log(chalk_1.default.yellow("\nFetched all required resources..."));
+        console.log(chalk_1.default.yellow("Compiling Resource Tree\n"));
         return mainTree;
     }
     catch (error) {

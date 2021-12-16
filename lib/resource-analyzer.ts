@@ -175,6 +175,9 @@ const analyzeResourceAndPolicies = async (policies, profile, regions): Promise<T
 
         //FOR S3
 
+        console.log(chalk.yellow("\nFetched all required resources..."));
+        console.log(chalk.yellow("Compiling Resource Tree\n"));
+
         return mainTree;
     } catch (error) {
         console.error(chalk.red(error));

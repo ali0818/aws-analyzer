@@ -2,6 +2,7 @@ import { EC2Client, paginateDescribeInstances, paginateDescribeNatGateways, pagi
 import { GetBucketAclCommand, GetBucketPolicyCommand, ListBucketsCommand, S3Client } from '@aws-sdk/client-s3';
 import { fromIni } from "@aws-sdk/credential-providers";
 import chalk from "chalk";
+import { Spinner } from "clui";
 
 const RESOURCE_CLIENT_NAMES: string[] = [
     'ec2',
@@ -76,6 +77,8 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
     }
 
     async getAllResources(): Promise<{ [key: string]: ResourceTypeReturnType }> {
+        console.log(chalk.yellow('\nGetting all EC2 resources...\n'));
+
         return {
             vpc: await this.getAllVPCs(),
             instance: await this.getAllInstances(),
@@ -93,7 +96,7 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
             const pager = paginateDescribeSecurityGroups({ client: ec2 }, {});
             let _securityGroups = [];
 
-            for await (const page of pager) {                
+            for await (const page of pager) {
                 _securityGroups = _securityGroups.concat(page.SecurityGroups);
             }
 
@@ -111,18 +114,27 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
     async getAllVPCs(): Promise<ResourceTypeReturnType> {
         let vpcs = [];
         let regionVPCsMap = {};
+        const spinner = new Spinner('\nGetting all VPCs...\n');
 
-        for (let region of this.regions) {
-            const ec2 = this.clients[region];
-            const pager = paginateDescribeVpcs({ client: ec2 }, {});
-            let _vpcs = [];
+        spinner.start();
 
-            for await (const page of pager) {
-                _vpcs.push(...page.Vpcs);
+        try {
+            for (let region of this.regions) {
+                const ec2 = this.clients[region];
+                const pager = paginateDescribeVpcs({ client: ec2 }, {});
+                let _vpcs = [];
+
+                for await (const page of pager) {
+                    _vpcs.push(...page.Vpcs);
+                }
+
+                regionVPCsMap[region] = _vpcs;
+                vpcs = vpcs.concat(..._vpcs);
             }
-
-            regionVPCsMap[region] = _vpcs;
-            vpcs = vpcs.concat(..._vpcs);
+        } catch (error) {
+            console.error(chalk.red(error));
+        } finally {
+            spinner.stop();
         }
 
         return {
@@ -136,20 +148,29 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
         let instances = [];
         let regionInstancesMap = {};
 
-        for (let region of this.regions) {
-            const ec2 = this.clients[region];
-            const pager = paginateDescribeInstances({ client: ec2 }, {});
+        const spinner = new Spinner('\nGetting all Instances...\n');
+        spinner.start();
 
-            let _instances = [];
+        try {
+            for (let region of this.regions) {
+                const ec2 = this.clients[region];
+                const pager = paginateDescribeInstances({ client: ec2 }, {});
 
-            for await (const page of pager) {
-                _instances = _instances.concat(page.Reservations.map(reservation => reservation.Instances));
+                let _instances = [];
+
+                for await (const page of pager) {
+                    _instances = _instances.concat(page.Reservations.map(reservation => reservation.Instances));
+                }
+
+                regionInstancesMap[region] = _instances.flat();
+                instances = instances.concat(..._instances);
             }
 
-            regionInstancesMap[region] = _instances.flat();
-            instances = instances.concat(..._instances);
+        } catch (error) {
+            console.error(chalk.red(error));
+        } finally {
+            spinner.stop()
         }
-
         return {
             all: instances,
             regionMap: regionInstancesMap,
@@ -161,17 +182,27 @@ export class EC2ResourceGetter<T> extends ResourceGetter<T> implements IResource
         let natGateways = [];
         let regionNatGatewaysMap = {};
 
-        for (let region of this.regions) {
-            const ec2 = this.clients[region];
-            const pager = paginateDescribeNatGateways({ client: ec2 }, {});
-            let _natGateways = [];
+        const spinner = new Spinner('\nGetting all NatGateways...\n');
+        spinner.start();
 
-            for await (const page of pager) {
-                _natGateways = _natGateways.concat(page.NatGateways);
+
+        try {
+            for (let region of this.regions) {
+                const ec2 = this.clients[region];
+                const pager = paginateDescribeNatGateways({ client: ec2 }, {});
+                let _natGateways = [];
+
+                for await (const page of pager) {
+                    _natGateways = _natGateways.concat(page.NatGateways);
+                }
+
+                regionNatGatewaysMap[region] = _natGateways;
+                natGateways = natGateways.concat(..._natGateways);
             }
-
-            regionNatGatewaysMap[region] = _natGateways;
-            natGateways = natGateways.concat(..._natGateways);
+        } catch (error) {
+            console.error(chalk.red(error));
+        } finally {
+            spinner.stop();
         }
 
         return {
@@ -189,6 +220,8 @@ export class S3ResourceGetter<T> extends ResourceGetter<T> implements IResourceG
     }
 
     async getAllResources(): Promise<{ [key: string]: ResourceTypeReturnType }> {
+        console.log(chalk.yellow('\nGetting all S3 resources...\n'));
+
         return {
             bucket: await this.getAllBuckets()
         }
@@ -198,38 +231,47 @@ export class S3ResourceGetter<T> extends ResourceGetter<T> implements IResourceG
         let buckets = [];
         let regionBucketsMap = {};
 
-        for (let region of this.regions) {
-            const s3 = this.clients[region];
+        const spinner = new Spinner('\nGetting all Buckets...\n');
+        spinner.start();
 
-            let cmd = new ListBucketsCommand({});
+        try {
+            for (let region of this.regions) {
+                const s3 = this.clients[region];
 
-            let res = await s3.send(cmd);
+                let cmd = new ListBucketsCommand({});
 
-            for (let i = 0; i < res.Buckets.length; i++) {
-                const bucket = res.Buckets[i];
-                // try {
-                //     let cmd = new GetBucketAclCommand({ Bucket: bucket.Name });
-                //     let aclResponse = await s3.send(cmd);
-                //     bucket['ACL'] = { Grants: aclResponse.Grants, Owner: aclResponse.Owner };
-                // } catch (err) {
-                //     console.log(chalk.red(`Error while getting ACL for bucket ${bucket.Name}`));
-                //     console.error(err)
-                // }
+                let res = await s3.send(cmd);
 
-                // try {
-                //     let policyCmd = new GetBucketPolicyCommand({ Bucket: bucket.Name });
-                //     let policyResponse = await s3.send(policyCmd);
+                for (let i = 0; i < res.Buckets.length; i++) {
+                    const bucket = res.Buckets[i];
+                    // try {
+                    //     let cmd = new GetBucketAclCommand({ Bucket: bucket.Name });
+                    //     let aclResponse = await s3.send(cmd);
+                    //     bucket['ACL'] = { Grants: aclResponse.Grants, Owner: aclResponse.Owner };
+                    // } catch (err) {
+                    //     console.log(chalk.red(`Error while getting ACL for bucket ${bucket.Name}`));
+                    //     console.error(err)
 
-                //     bucket['Policy'] = policyResponse.Policy;
-                // } catch (error) {
-                //     console.log(chalk.red(`Error while getting policy for bucket ${bucket.Name}`));
-                //     console.log(error);
-                // }
+                    // }
+                    // try {
+                    //     let policyCmd = new GetBucketPolicyCommand({ Bucket: bucket.Name });
+                    //     let policyResponse = await s3.send(policyCmd);
 
-                buckets.push(bucket);
+                    //     bucket['Policy'] = policyResponse.Policy;
+                    // } catch (error) {
+                    //     console.log(chalk.red(`Error while getting policy for bucket ${bucket.Name}`));
+                    //     console.log(error);
+                    // }
+
+                    buckets.push(bucket);
+                }
+
+                regionBucketsMap[region] = buckets;
             }
-
-            regionBucketsMap[region] = buckets;
+        } catch (error) {
+            console.error(chalk.red(error));
+        } finally {
+            spinner.stop();
         }
 
         return { all: buckets, regionMap: regionBucketsMap, metadata: { primaryKey: 'Name' } };
