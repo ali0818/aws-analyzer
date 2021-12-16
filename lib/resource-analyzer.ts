@@ -445,7 +445,7 @@ const getResourcesFromResourceString = (resourceString: string, resources: Servi
                                 if (resourceId == '' || resourceId == '*') {
                                     _resources = _resources.concat(resources[type].regionMap[_region]);
                                 } else {
-                                    _resources = _resources.concat(resources[type].all.filter(r => r[primaryKey] == resourceId));
+                                    _resources = _resources.concat(resources[type].regionMap[_region].filter(r => r[primaryKey] == resourceId));
                                 }
                             })
                     });
@@ -455,7 +455,7 @@ const getResourcesFromResourceString = (resourceString: string, resources: Servi
                         if (resourceId == '' || resourceId == '*') {
                             _resources = _resources.concat(resources[type].regionMap[_region]);
                         } else {
-                            _resources = _resources.concat(resources[type].all.filter(r => r[primaryKey] == resourceId));
+                            _resources = _resources.concat(resources[type].regionMap[_region].filter(r => r[primaryKey] == resourceId));
                         }
                     })
             }
@@ -463,7 +463,7 @@ const getResourcesFromResourceString = (resourceString: string, resources: Servi
             if (resourceId == '*') {
                 _resources = resources[type].regionMap[region];
             } else {
-                _resources = resources[type].all.filter(resource => {
+                _resources = resources[type].regionMap[region].filter(resource => {
                     return resource[primaryKey] == resourceId;
                 });
             }
@@ -471,7 +471,7 @@ const getResourcesFromResourceString = (resourceString: string, resources: Servi
             if (resourceId == '*') {
                 _resources = resources[type].regionMap[region];
             } else {
-                _resources = resources[type].all.filter(resource => {
+                _resources = resources[type].regionMap[region].filter(resource => {
                     return resource[primaryKey] == resourceId;
                 });
             }
