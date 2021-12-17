@@ -1,5 +1,5 @@
 import { EC2Client, paginateDescribeInstances, paginateDescribeNatGateways, paginateDescribeSecurityGroups, paginateDescribeVpcs } from "@aws-sdk/client-ec2";
-import { GetBucketAclCommand, GetBucketPolicyCommand, ListBucketsCommand, S3Client } from '@aws-sdk/client-s3';
+import { GetBucketAclCommand, GetBucketLocationCommand, GetBucketPolicyCommand, ListBucketsCommand, ListBucketsCommandInput, S3Client } from '@aws-sdk/client-s3';
 import { fromIni } from "@aws-sdk/credential-providers";
 import chalk from "chalk";
 import { Spinner } from "clui";
@@ -234,40 +234,46 @@ export class S3ResourceGetter<T> extends ResourceGetter<T> implements IResourceG
 
         console.log(chalk.blue('\nGetting all S3 buckets...\n'));
 
+        this.regions
+            .forEach((region) => {
+                regionBucketsMap[region] = [];
+            })
+
         try {
-            for (let region of this.regions) {
-                const s3 = this.clients[region];
+            const s3: S3Client = this.clients[this.regions[0]];
 
-                let cmd = new ListBucketsCommand({});
+            let input: ListBucketsCommandInput = {};
+            let cmd = new ListBucketsCommand({});
 
-                let res = await s3.send(cmd);
+            let res = await s3.send(cmd);
 
-                for (let i = 0; i < res.Buckets.length; i++) {
-                    const bucket = res.Buckets[i];
-                    // try {
-                    //     let cmd = new GetBucketAclCommand({ Bucket: bucket.Name });
-                    //     let aclResponse = await s3.send(cmd);
-                    //     bucket['ACL'] = { Grants: aclResponse.Grants, Owner: aclResponse.Owner };
-                    // } catch (err) {
-                    //     console.log(chalk.red(`Error while getting ACL for bucket ${bucket.Name}`));
-                    //     console.error(err)
+            for (let i = 0; i < res.Buckets.length; i++) {
+                const bucket = res.Buckets[i];
+                try {
+                    let cmd = new GetBucketLocationCommand({
+                        Bucket: bucket.Name
+                    });
+                    let locationResponse = await s3.send(cmd);
+                    let location = locationResponse.LocationConstraint;
+                    bucket['Location'] = locationResponse.LocationConstraint;
 
-                    // }
-                    // try {
-                    //     let policyCmd = new GetBucketPolicyCommand({ Bucket: bucket.Name });
-                    //     let policyResponse = await s3.send(policyCmd);
+                    if (location) {
+                        regionBucketsMap[location].push(bucket);
+                    }
 
-                    //     bucket['Policy'] = policyResponse.Policy;
-                    // } catch (error) {
-                    //     console.log(chalk.red(`Error while getting policy for bucket ${bucket.Name}`));
-                    //     console.log(error);
-                    // }
-
-                    buckets.push(bucket);
+                } catch (error) {
+                    console.error(error);
                 }
 
-                regionBucketsMap[region] = buckets;
+                buckets.push(bucket);
             }
+
+            Object.keys(regionBucketsMap)
+                .forEach(region => {
+                    console.log(chalk.green(`Total buckets in ${region}: ${regionBucketsMap[region].length}`));
+                });
+
+            console.log(chalk.green(`Total buckets: ${buckets.length}`));
         } catch (error) {
             console.error(chalk.red(error));
         } finally {

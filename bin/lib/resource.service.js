@@ -190,33 +190,38 @@ class S3ResourceGetter extends ResourceGetter {
         let buckets = [];
         let regionBucketsMap = {};
         console.log(chalk_1.default.blue('\nGetting all S3 buckets...\n'));
+        this.regions
+            .forEach((region) => {
+            regionBucketsMap[region] = [];
+        });
         try {
-            for (let region of this.regions) {
-                const s3 = this.clients[region];
-                let cmd = new client_s3_1.ListBucketsCommand({});
-                let res = await s3.send(cmd);
-                for (let i = 0; i < res.Buckets.length; i++) {
-                    const bucket = res.Buckets[i];
-                    // try {
-                    //     let cmd = new GetBucketAclCommand({ Bucket: bucket.Name });
-                    //     let aclResponse = await s3.send(cmd);
-                    //     bucket['ACL'] = { Grants: aclResponse.Grants, Owner: aclResponse.Owner };
-                    // } catch (err) {
-                    //     console.log(chalk.red(`Error while getting ACL for bucket ${bucket.Name}`));
-                    //     console.error(err)
-                    // }
-                    // try {
-                    //     let policyCmd = new GetBucketPolicyCommand({ Bucket: bucket.Name });
-                    //     let policyResponse = await s3.send(policyCmd);
-                    //     bucket['Policy'] = policyResponse.Policy;
-                    // } catch (error) {
-                    //     console.log(chalk.red(`Error while getting policy for bucket ${bucket.Name}`));
-                    //     console.log(error);
-                    // }
-                    buckets.push(bucket);
+            const s3 = this.clients[this.regions[0]];
+            let input = {};
+            let cmd = new client_s3_1.ListBucketsCommand({});
+            let res = await s3.send(cmd);
+            for (let i = 0; i < res.Buckets.length; i++) {
+                const bucket = res.Buckets[i];
+                try {
+                    let cmd = new client_s3_1.GetBucketLocationCommand({
+                        Bucket: bucket.Name
+                    });
+                    let locationResponse = await s3.send(cmd);
+                    let location = locationResponse.LocationConstraint;
+                    bucket['Location'] = locationResponse.LocationConstraint;
+                    if (location) {
+                        regionBucketsMap[location].push(bucket);
+                    }
                 }
-                regionBucketsMap[region] = buckets;
+                catch (error) {
+                    console.error(error);
+                }
+                buckets.push(bucket);
             }
+            Object.keys(regionBucketsMap)
+                .forEach(region => {
+                console.log(chalk_1.default.green(`Total buckets in ${region}: ${regionBucketsMap[region].length}`));
+            });
+            console.log(chalk_1.default.green(`Total buckets: ${buckets.length}`));
         }
         catch (error) {
             console.error(chalk_1.default.red(error));
