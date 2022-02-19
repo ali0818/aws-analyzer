@@ -45,6 +45,29 @@ const analyzeEC2Resources = async (policies, resources, statements, profile, reg
             action = [action];
         if (typeof resource === 'string')
             resource = [resource];
+        //Read Actions for ec2
+        let relevantGetActions = [
+            'ec2:*',
+            "*",
+            "ec2:Describe*",
+            "ec2:DescribeInstances",
+            "ec2:DescribeVpcs",
+            "ec2:DescribeNatGateways",
+            "ec2:DescribeSecurityGroups",
+        ];
+        let hasLeastEC2Access = action.some((action) => {
+            if (action == '*') {
+                toProcess = true;
+                return true;
+            }
+            if (relevantGetActions.includes(action)) {
+                toProcess = true;
+                return true;
+            }
+            return false;
+        });
+        if (!hasLeastEC2Access)
+            continue;
         let regionResourceTypeMap = {};
         //Iterate over policy document resource strings
         for (let i = 0; i < resource.length; i++) {
@@ -149,7 +172,8 @@ const generateTooltipForResource = (resource, resourceType, resourceId, region) 
                 az: resource.Placement.AvailabilityZone,
                 publicIp: resource.PublicIpAddress,
                 privateIp: resource.PrivateIpAddress,
-                status: resource.Status
+                status: resource.Status,
+                launchTime: resource.LaunchTime,
             };
         }
         case 'vpc': {

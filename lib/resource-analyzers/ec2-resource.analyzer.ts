@@ -30,6 +30,8 @@ export const analyzeEC2Resources = async (policies, resources: ServiceAllResourc
         subTree.root.addChild(node);
     });
 
+
+
     //Check statements for ec2 principal and ec2 resources
     for (let i = 0; i < statements.length; i++) {
         const statement = statements[i];
@@ -49,6 +51,32 @@ export const analyzeEC2Resources = async (policies, resources: ServiceAllResourc
         //Turn action and resource to array if they are not already
         if (typeof action === 'string') action = [action];
         if (typeof resource === 'string') resource = [resource];
+
+        //Read Actions for ec2
+        let relevantGetActions = [
+            'ec2:*',
+            "*",
+            "ec2:Describe*",
+            "ec2:DescribeInstances",
+            "ec2:DescribeVpcs",
+            "ec2:DescribeNatGateways",
+            "ec2:DescribeSecurityGroups",
+        ]
+
+        let hasLeastEC2Access = (action as string[]).some((action: string) => {
+            if (action == '*') {
+                toProcess = true;
+                return true;
+            }
+
+            if (relevantGetActions.includes(action)) {
+                toProcess = true;
+                return true;
+            }
+            return false;
+        });
+
+        if (!hasLeastEC2Access) continue;
 
         let regionResourceTypeMap = {};
 
@@ -191,7 +219,8 @@ const generateTooltipForResource = (resource: any, resourceType: string, resourc
                 az: resource.Placement.AvailabilityZone,
                 publicIp: resource.PublicIpAddress,
                 privateIp: resource.PrivateIpAddress,
-                status: resource.Status
+                status: resource.Status,
+                launchTime: resource.LaunchTime,
             }
         }
         case 'vpc': {

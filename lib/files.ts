@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import { CACHE_DIR } from '..';
+import { serializeError } from './serializer';
 
 export const getCurrentDirectoryBase = () => {
     return "./";
@@ -48,5 +49,37 @@ export const loadCache = async (filename: string, profile: string = 'default', c
     } catch (error) {
         console.error(chalk.red(error));
         return null;
+    }
+}
+
+export const logError = async (error: any, profile: string, cachedir: string = CACHE_DIR) => {
+    try {
+        const baseDir = getCurrentDirectoryBase();
+        if (!directoryExists(path.resolve(baseDir, `${cachedir}/${profile}`))) {
+            fs.mkdirSync(`${cachedir}/${profile}`, { recursive: true });
+        }
+        const filePath = path.join(baseDir, cachedir, profile, 'error.txt');
+        console.log(chalk.yellow('Writing Error to file'));
+        console.log(error);
+        let serialized = serializeError(error);
+        console.log(serialized);
+        console.log(typeof serialized);
+        await fs.promises.appendFile(filePath, '\n' + JSON.stringify(serializeError(error)));
+    } catch (error) {
+        console.error(chalk.red(error));
+    }
+}
+
+export const flushErrors = async (profile: string, cachedir: string = CACHE_DIR) => {
+    try {
+        const baseDir = getCurrentDirectoryBase();
+        if (!directoryExists(path.resolve(baseDir, `${cachedir}/${profile}`))) {
+            fs.mkdirSync(`${cachedir}/${profile}`, { recursive: true });
+        }
+        const filePath = path.join(baseDir, cachedir, profile, 'error.log');
+
+        fs.unlinkSync(filePath);
+    } catch (error) {
+        console.error(chalk.red(error));
     }
 }

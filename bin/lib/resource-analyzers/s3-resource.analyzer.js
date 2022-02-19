@@ -47,6 +47,28 @@ const analyzeS3Resources = async (policies, resources, statements, profile, regi
         if (typeof resource === 'string')
             resource = [resource];
         let regionResourceTypeMap = {};
+        //Read Actions for s3 
+        let relevantGetActions = [
+            's3:Get*',
+            's3:List*',
+            's3:GetBucket',
+            's3:ListBuckets',
+            "*",
+            "s3:*"
+        ];
+        let hasLeastS3Access = action.some((action) => {
+            if (action == '*') {
+                toProcess = true;
+                return true;
+            }
+            if (relevantGetActions.includes(action)) {
+                toProcess = true;
+                return true;
+            }
+            return false;
+        });
+        if (!hasLeastS3Access)
+            continue;
         //Iterate over policy document resource strings
         for (let i = 0; i < resource.length; i++) {
             const _resource = resource[i];

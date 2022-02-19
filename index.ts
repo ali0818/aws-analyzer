@@ -7,6 +7,7 @@ import yargs from 'yargs';
 import * as analyzer from './lib/analyzer';
 import { regions } from './lib/constants/regions';
 import { analyzeResources } from './lib/resource-analyzer';
+import { flushErrors } from './lib/files';
 
 export * as files from './lib/files';
 
@@ -47,6 +48,12 @@ function processArgs() {
         .command(['ec2'], 'analyze ec2 instances', () => { }, (argv) => {
             console.log("RUNNING EC@");
             runEC2(argv);
+        })
+        .command('flush', 'Flushes Errors', () => {
+            return baseArgs()
+        }, (argv) => {
+            console.log(chalk.yellow('Flushing Previous Errors'));
+            flushErrors(argv.profile, argv.cachedir);
         })
         .command('resources', 'Analyze iam resources',
             () => {

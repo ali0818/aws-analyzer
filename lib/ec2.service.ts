@@ -214,7 +214,6 @@ export class EC2Service {
         }
     }
 
-
     /**
      * Get flow logs for a VPC
      * @param resourceId 

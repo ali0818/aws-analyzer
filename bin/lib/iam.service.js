@@ -70,6 +70,24 @@ class IamService {
             console.error(chalk_1.default.red(error));
         }
     }
+    async getAllUsers() {
+        try {
+            console.log(chalk_1.default.blue("Getting all users..."));
+            let users = [];
+            const paginator = (0, client_iam_1.paginateListUsers)({
+                client: this.client
+            }, {});
+            for await (const u of paginator) {
+                users = users.concat(u.Users);
+            }
+            ;
+            return users;
+        }
+        catch (error) {
+            console.error(chalk_1.default.red("Error getting users"));
+            console.error(chalk_1.default.red(error));
+        }
+    }
     /**
      * Gets all policies directly attached or under the user
      * @param user
@@ -233,10 +251,9 @@ class IamService {
      * @param user
      */
     async listAllPoliciesForUser(user) {
-        let spinner = new clui_1.Spinner(chalk_1.default.blue("Getting policies for user..."));
+        let spinner = new clui_1.Spinner(chalk_1.default.blue(`Getting policies for user ${user.UserName}...`));
         try {
             spinner.start();
-            console.log(chalk_1.default.blue("Getting policies for user..."));
             let totalPolicies = [];
             let userPolicies = await this.getAllPoliciesUnderUser(user);
             totalPolicies.push(...userPolicies);

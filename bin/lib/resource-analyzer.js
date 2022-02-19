@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyzeResources = void 0;
 const chalk_1 = __importDefault(require("chalk"));
 const clui_1 = require("clui");
+const __1 = require("..");
 const policies_1 = require("./constants/policies");
 const files_1 = require("./files");
 const iam_service_1 = require("./iam.service");
@@ -18,44 +19,56 @@ const CACHE_FILE_NAME = 'resource-cache.json';
 const TREE_CACHE_FILE_NAME = 'resource-tree-cache.json';
 async function analyzeResources(profile, regions, refreshCache, cacheDir) {
     const iamClient = new iam_service_1.IamService(profile);
-    try {
-        const user = await iamClient.getUser();
-        let _cacheExists = await (0, files_1.cacheExists)(CACHE_FILE_NAME, profile);
-        let _treeCacheExists = await (0, files_1.cacheExists)(TREE_CACHE_FILE_NAME, profile);
-        let details = {};
-        let treeDetails = {};
-        if (_treeCacheExists && _cacheExists && !refreshCache) {
-            console.log(chalk_1.default.yellow('Using cached data'));
-            const cache = await (0, files_1.loadCache)(CACHE_FILE_NAME, profile, cacheDir);
-            const treeCache = await (0, files_1.loadCache)(TREE_CACHE_FILE_NAME, profile, cacheDir);
-            details = cache;
-            treeDetails = treeCache;
-        }
-        else {
-            const policies = await iamClient.listAllPoliciesForUser(user);
-            details.policies = policies;
-            console.log(chalk_1.default.green('Got all the policies'));
-            const { totalResources, regionResourcesMap } = await getAllResources(profile, regions);
-            details.resources = {
-                total: totalResources,
-                regionResourcesMap
-            };
-            console.log(chalk_1.default.green('Got all the resources'));
-            console.log(chalk_1.default.underline.green(`There are total {${totalResources.length}} resources in all the regions`));
-            await (0, files_1.saveCache)(CACHE_FILE_NAME, details, profile, cacheDir);
-            console.log(chalk_1.default.yellow('Saved Policies data to cache'));
-            const mainTree = await analyzeResourceAndPolicies(policies, profile, regions);
-            await (0, files_1.saveCache)(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile, cacheDir);
-        }
-        return {
-            details,
-            comprehensive: treeDetails
-        };
+    const users = await iamClient.getAllUsers();
+    console.log(chalk_1.default.yellow(`Got ${users.length} users`));
+    const { totalResources, regionResourcesMap } = await getAllResources(profile, regions);
+    const mainTree = new graph_1.Tree(`${users.length} Users`, new graph_1.Node('user', {
+        type: "root"
+    }));
+    let _cacheExists = await (0, files_1.cacheExists)(CACHE_FILE_NAME, profile);
+    let _treeCacheExists = await (0, files_1.cacheExists)(TREE_CACHE_FILE_NAME, profile);
+    let details = {};
+    let treeDetails = {};
+    if (_treeCacheExists && _cacheExists && !refreshCache) {
+        console.log(chalk_1.default.yellow('Using cached data'));
+        const cache = await (0, files_1.loadCache)(CACHE_FILE_NAME, profile, cacheDir);
+        const treeCache = await (0, files_1.loadCache)(TREE_CACHE_FILE_NAME, profile, cacheDir);
+        details = cache;
+        treeDetails = treeCache;
     }
-    catch (error) {
-        console.error(chalk_1.default.red(`Error: ${error.message}`));
-        console.log(error);
+    else {
+        for (let i = 0; i < users.length; i++) {
+            try {
+                const user = users[i];
+                const policies = await iamClient.listAllPoliciesForUser(user);
+                if (!details[user.UserId]) {
+                    details[user.UserId] = {};
+                }
+                details[user.UserId].policies = policies;
+                console.log(chalk_1.default.green('Got all the policies'));
+                details[user.UserId].resources = {
+                    total: totalResources,
+                    regionResourcesMap
+                };
+                console.log(chalk_1.default.green('Got all the resources'));
+                console.log(chalk_1.default.underline.green(`There are total {${totalResources.length}} resources in all the regions`));
+                await (0, files_1.saveCache)(CACHE_FILE_NAME, details, profile, cacheDir);
+                console.log(chalk_1.default.yellow('Saved Policies data to cache'));
+                const userTree = await analyzeResourceAndPolicies(policies, profile, regions, user);
+                mainTree.root.addChild(userTree.root);
+            }
+            catch (error) {
+                console.error(chalk_1.default.red(`Error: ${error.message}`));
+                console.log(error);
+                __1.files.logError(error, profile, cacheDir);
+            }
+        }
     }
+    await (0, files_1.saveCache)(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile, cacheDir);
+    return {
+        details,
+        comprehensive: treeDetails
+    };
 }
 exports.analyzeResources = analyzeResources;
 const getAllResources = async (profile, regions) => {
@@ -104,7 +117,7 @@ const initializeRegionalResourceTaggingClients = (profile, regions) => {
                                 }
                         }
  */
-const analyzeResourceAndPolicies = async (policies, profile, regions) => {
+const analyzeResourceAndPolicies = async (policies, profile, regions, user) => {
     console.log(chalk_1.default.yellow('Analyzing Resources and policies'));
     console.log(chalk_1.default.yellow('This will create a resource structure tree for the current user'));
     let statements = [];
@@ -112,11 +125,10 @@ const analyzeResourceAndPolicies = async (policies, profile, regions) => {
     const iamClient = new iam_service_1.IamService(profile);
     const resourceService = new resource_service_1.ResourceService(profile, regions);
     // Get all the statements from all the policies
-    let spinner = new clui_1.Spinner('Getting all the resources...');
-    const user = await iamClient.getUser();
+    let spinner = new clui_1.Spinner(`Getting all the resources for ${user.UserName}...`);
     try {
         const allResources = await resourceService.getAllResources();
-        let mainTree = new graph_1.Tree("User", new graph_1.Node(user.UserName, {
+        let mainTree = new graph_1.Tree(`${user.UserName}`, new graph_1.Node(user.UserName, {
             type: 'user',
             userName: user.UserName,
             userId: user.UserId,

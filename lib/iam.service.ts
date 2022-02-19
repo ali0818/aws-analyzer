@@ -2,6 +2,7 @@ import {
     AttachedPolicy, GetGroupPolicyCommand, GetPolicyVersionCommand, GetUserCommand,
     GetUserPolicyCommand, IAMClient, ListAttachedGroupPoliciesCommand, ListAttachedUserPoliciesCommand,
     ListGroupPoliciesCommand, ListGroupsForUserCommand, ListPolicyVersionsCommand, ListUserPoliciesCommand,
+    paginateListUsers,
     PolicyDetail,
     User
 } from "@aws-sdk/client-iam";
@@ -86,6 +87,28 @@ export class IamService {
         }
     }
 
+    async getAllUsers() {
+        try {
+            console.log(chalk.blue("Getting all users..."));
+
+            let users: User[] = [];
+
+            const paginator = paginateListUsers({
+                client: this.client
+            }, {});
+
+            for await (const u of paginator) {
+                users = users.concat(u.Users);
+            };
+
+            return users;
+        } catch (error) {
+            console.error(chalk.red("Error getting users"));
+            console.error(chalk.red(error));
+        }
+    }
+
+
     /**
      * Gets all policies directly attached or under the user
      * @param user 
@@ -119,7 +142,7 @@ export class IamService {
                 let document = await this.getUserInlinePolicy(user, policy);
                 console.log("POLICY DOCUMENT FOR ", policy);
                 console.log(JSON.parse(decodeURIComponent(document.toString())));
-                
+
                 if (document) {
                     policy = {
                         PolicyName: policy,
@@ -267,10 +290,9 @@ export class IamService {
      * @param user 
      */
     async listAllPoliciesForUser(user: User) {
-        let spinner = new Spinner(chalk.blue("Getting policies for user..."));
+        let spinner = new Spinner(chalk.blue(`Getting policies for user ${user.UserName}...`));
         try {
             spinner.start();
-            console.log(chalk.blue("Getting policies for user..."));
             let totalPolicies = [];
 
             let userPolicies = await this.getAllPoliciesUnderUser(user);

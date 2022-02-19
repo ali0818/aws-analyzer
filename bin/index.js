@@ -31,6 +31,7 @@ const yargs_1 = __importDefault(require("yargs"));
 const analyzer = __importStar(require("./lib/analyzer"));
 const regions_1 = require("./lib/constants/regions");
 const resource_analyzer_1 = require("./lib/resource-analyzer");
+const files_1 = require("./lib/files");
 exports.files = __importStar(require("./lib/files"));
 exports.CACHE_DIR = 'aws-resources-cache';
 (0, clear_1.default)();
@@ -62,6 +63,12 @@ function processArgs() {
         .command(['ec2'], 'analyze ec2 instances', () => { }, (argv) => {
         console.log("RUNNING EC@");
         runEC2(argv);
+    })
+        .command('flush', 'Flushes Errors', () => {
+        return baseArgs();
+    }, (argv) => {
+        console.log(chalk_1.default.yellow('Flushing Previous Errors'));
+        (0, files_1.flushErrors)(argv.profile, argv.cachedir);
     })
         .command('resources', 'Analyze iam resources', () => {
         return baseArgs();
