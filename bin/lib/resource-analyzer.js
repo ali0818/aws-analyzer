@@ -22,7 +22,7 @@ async function analyzeResources(profile, regions, refreshCache, cacheDir) {
     const users = await iamClient.getAllUsers();
     console.log(chalk_1.default.yellow(`Got ${users.length} users`));
     const { totalResources, regionResourcesMap } = await getAllResources(profile, regions);
-    const mainTree = new graph_1.Tree(`${users.length} Users`, new graph_1.Node('user', {
+    const mainTree = new graph_1.Tree(`${users.length} Users`, new graph_1.Node(`${users.length} Users`, {
         type: "root"
     }));
     let _cacheExists = await (0, files_1.cacheExists)(CACHE_FILE_NAME, profile);

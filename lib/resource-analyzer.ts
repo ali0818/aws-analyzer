@@ -34,7 +34,7 @@ export async function analyzeResources(profile: string, regions: string[], refre
 
     const { totalResources, regionResourcesMap } = await getAllResources(profile, regions);
 
-    const mainTree = new Tree(`${users.length} Users`, new Node('user', {
+    const mainTree = new Tree(`${users.length} Users`, new Node(`${users.length} Users`, {
         type: "root"
     }));
 
