@@ -1,7 +1,7 @@
 import { getActions } from "../actions-list";
 import { ServiceAllResourceReturnType } from "../resource.service";
 import { Node, Tree } from "../utils/graph";
-import { generateResourceMapForResourceType, getResourceDetailsFromResourceString } from "./analyzer-utils";
+import { generateResourceMapForResourceType, getResourceDetailsFromResourceString, removeEmptyResourceNodes } from "./analyzer-utils";
 
 /**
  * Analyze all EC2 resources in all the provided regions
@@ -147,6 +147,8 @@ export const analyzeEC2Resources = async (policies, resources: ServiceAllResourc
             }
         }
     }
+
+    subTree = removeEmptyResourceNodes(subTree, regions, relevantResourceTypes);
 
     return { ec2Subtree: subTree }
 }

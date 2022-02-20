@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getResourcesFromResourceString = exports.getResourceDetailsFromResourceString = exports.generateResourceMapForResourceType = exports.TREE_CACHE_FILE_NAME = exports.CACHE_FILE_NAME = void 0;
+exports.removeEmptyResourceNodes = exports.getResourcesFromResourceString = exports.getResourceDetailsFromResourceString = exports.generateResourceMapForResourceType = exports.TREE_CACHE_FILE_NAME = exports.CACHE_FILE_NAME = void 0;
 const regex_1 = require("../constants/regex");
 const graph_1 = require("../utils/graph");
 exports.CACHE_FILE_NAME = 'resource-cache.json';
@@ -172,4 +172,29 @@ const getResourcesFromResourceString = (resourceString, resources, region, resou
     }
 };
 exports.getResourcesFromResourceString = getResourcesFromResourceString;
+/**
+ * Remove resourceType nodes where there are no resources
+ * @param tree
+ * @param regions
+ * @param relevantResourceTypes
+ * @returns
+ */
+const removeEmptyResourceNodes = (tree, regions, relevantResourceTypes) => {
+    regions.forEach(region => {
+        let node = tree.getNode(region);
+        let totalChildren = 0;
+        relevantResourceTypes.forEach(resourceType => {
+            let resourceNode = node.getChildByName(resourceType);
+            if (resourceNode && resourceNode.children.length == 0) {
+                node.removeNode(resourceNode);
+            }
+            totalChildren += resourceNode.calculateTotalChildren();
+        });
+        if (totalChildren == 0) {
+            tree.root.removeNode(node);
+        }
+    });
+    return tree;
+};
+exports.removeEmptyResourceNodes = removeEmptyResourceNodes;
 //# sourceMappingURL=analyzer-utils.js.map

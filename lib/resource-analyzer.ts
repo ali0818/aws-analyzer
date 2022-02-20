@@ -53,6 +53,8 @@ export async function analyzeResources(profile: string, regions: string[], refre
         treeDetails = treeCache;
 
     } else {
+        const resourceService = new ResourceService(profile, regions);
+        const allResources = await resourceService.getAllResources();
 
         for (let i = 0; i < users.length; i++) {
             try {
@@ -80,7 +82,7 @@ export async function analyzeResources(profile: string, regions: string[], refre
                 await saveCache(CACHE_FILE_NAME, details, profile, cacheDir);
                 console.log(chalk.yellow('Saved Policies data to cache'));
 
-                const userTree = await analyzeResourceAndPolicies(policies, profile, regions, user);
+                const userTree = await analyzeResourceAndPolicies(policies, profile, regions, user, allResources);
 
                 mainTree.root.addChild(userTree.root);
             } catch (error) {
@@ -156,7 +158,9 @@ const initializeRegionalResourceTaggingClients = (profile: string, regions: stri
                                 }
                         }
  */
-const analyzeResourceAndPolicies = async (policies, profile, regions, user: User): Promise<Tree> => {
+const analyzeResourceAndPolicies = async (policies, profile, regions, user: User, allResources:
+    { ec2: ServiceAllResourceReturnType, s3: ServiceAllResourceReturnType }
+): Promise<Tree> => {
     console.log(chalk.yellow('Analyzing Resources and policies'));
     console.log(chalk.yellow('This will create a resource structure tree for the current user'));
     let statements: any[] = [];
@@ -165,14 +169,10 @@ const analyzeResourceAndPolicies = async (policies, profile, regions, user: User
 
     const iamClient = new IamService(profile);
 
-    const resourceService = new ResourceService(profile, regions);
-
     // Get all the statements from all the policies
     let spinner = new Spinner(`Getting all the resources for ${user.UserName}...`);
 
     try {
-        const allResources = await resourceService.getAllResources();
-
         let mainTree = new Tree(`${user.UserName}`, new Node(user.UserName, {
             type: 'user',
             userName: user.UserName,

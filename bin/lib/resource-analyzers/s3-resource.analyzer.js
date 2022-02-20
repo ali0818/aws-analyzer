@@ -110,6 +110,7 @@ const analyzeS3Resources = async (policies, resources, statements, profile, regi
             }
         }
     }
+    subTree = (0, analyzer_utils_1.removeEmptyResourceNodes)(subTree, regions, relevantResourceTypes);
     return { s3Subtree: subTree };
 };
 exports.analyzeS3Resources = analyzeS3Resources;

@@ -37,6 +37,8 @@ async function analyzeResources(profile, regions, refreshCache, cacheDir) {
         treeDetails = treeCache;
     }
     else {
+        const resourceService = new resource_service_1.ResourceService(profile, regions);
+        const allResources = await resourceService.getAllResources();
         for (let i = 0; i < users.length; i++) {
             try {
                 const user = users[i];
@@ -54,7 +56,7 @@ async function analyzeResources(profile, regions, refreshCache, cacheDir) {
                 console.log(chalk_1.default.underline.green(`There are total {${totalResources.length}} resources in all the regions`));
                 await (0, files_1.saveCache)(CACHE_FILE_NAME, details, profile, cacheDir);
                 console.log(chalk_1.default.yellow('Saved Policies data to cache'));
-                const userTree = await analyzeResourceAndPolicies(policies, profile, regions, user);
+                const userTree = await analyzeResourceAndPolicies(policies, profile, regions, user, allResources);
                 mainTree.root.addChild(userTree.root);
             }
             catch (error) {
@@ -117,17 +119,15 @@ const initializeRegionalResourceTaggingClients = (profile, regions) => {
                                 }
                         }
  */
-const analyzeResourceAndPolicies = async (policies, profile, regions, user) => {
+const analyzeResourceAndPolicies = async (policies, profile, regions, user, allResources) => {
     console.log(chalk_1.default.yellow('Analyzing Resources and policies'));
     console.log(chalk_1.default.yellow('This will create a resource structure tree for the current user'));
     let statements = [];
     let isAdmin = false;
     const iamClient = new iam_service_1.IamService(profile);
-    const resourceService = new resource_service_1.ResourceService(profile, regions);
     // Get all the statements from all the policies
     let spinner = new clui_1.Spinner(`Getting all the resources for ${user.UserName}...`);
     try {
-        const allResources = await resourceService.getAllResources();
         let mainTree = new graph_1.Tree(`${user.UserName}`, new graph_1.Node(user.UserName, {
             type: 'user',
             userName: user.UserName,

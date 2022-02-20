@@ -69,6 +69,31 @@ class Node {
         }
         return null;
     }
+    removeNodeByName(name) {
+        if (this.name == name) {
+            this.parent.children.splice(this.parent.children.indexOf(this), 1);
+            return;
+        }
+        for (var i = 0; i < this.children.length; i++) {
+            var node = this.children[i].getChildByName(name);
+            if (node) {
+                this.children.splice(i, 1);
+                return;
+            }
+        }
+    }
+    removeNode(node) {
+        if (this.children.indexOf(node) > -1) {
+            this.children.splice(this.children.indexOf(node), 1);
+        }
+    }
+    calculateTotalChildren() {
+        var total = this.children.length;
+        for (var i = 0; i < this.children.length; i++) {
+            total += this.children[i].calculateTotalChildren();
+        }
+        return total;
+    }
 }
 exports.Node = Node;
 //# sourceMappingURL=graph.js.map

@@ -1,6 +1,6 @@
 import { ServiceAllResourceReturnType } from "../resource.service";
 import { Node, Tree } from "../utils/graph";
-import { generateResourceMapForResourceType, getResourceDetailsFromResourceString } from "./analyzer-utils";
+import { generateResourceMapForResourceType, getResourceDetailsFromResourceString, removeEmptyResourceNodes } from "./analyzer-utils";
 
 /**
  * Anayyze S3 resources fetched 
@@ -77,7 +77,7 @@ export const analyzeS3Resources = async (policies, resources: ServiceAllResource
             return false;
         });
 
-        
+
         if (!hasLeastS3Access) continue;
 
         //Iterate over policy document resource strings
@@ -145,6 +145,8 @@ export const analyzeS3Resources = async (policies, resources: ServiceAllResource
             }
         }
     }
+
+    subTree = removeEmptyResourceNodes(subTree, regions, relevantResourceTypes);
 
     return { s3Subtree: subTree }
 }

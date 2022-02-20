@@ -112,6 +112,7 @@ const analyzeEC2Resources = async (policies, resources, statements, profile, reg
             }
         }
     }
+    subTree = (0, analyzer_utils_1.removeEmptyResourceNodes)(subTree, regions, relevantResourceTypes);
     return { ec2Subtree: subTree };
 };
 exports.analyzeEC2Resources = analyzeEC2Resources;

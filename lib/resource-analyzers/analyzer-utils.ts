@@ -198,3 +198,30 @@ export const getResourcesFromResourceString = (resourceString: string, resources
         return { resources: [], region: '', resourceType: '', primaryKey: '' };
     }
 }
+
+/**
+ * Remove resourceType nodes where there are no resources
+ * @param tree 
+ * @param regions 
+ * @param relevantResourceTypes 
+ * @returns 
+ */
+export const removeEmptyResourceNodes = (tree: Tree, regions: string[], relevantResourceTypes: string[]) => {
+    regions.forEach(region => {
+        let node = tree.getNode(region);
+        let totalChildren = 0;
+        relevantResourceTypes.forEach(resourceType => {
+            let resourceNode = node.getChildByName(resourceType);
+            if (resourceNode && resourceNode.children.length == 0) {
+                node.removeNode(resourceNode);
+            }
+            totalChildren += resourceNode.calculateTotalChildren();
+        });
+
+        if (totalChildren == 0) {
+            tree.root.removeNode(node);
+        }
+    });
+
+    return tree;
+}
