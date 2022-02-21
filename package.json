@@ -1,6 +1,6 @@
 {
   "name": "aws-analyzer",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "description": "Analyze AWS resources from all regions",
   "main": "bin/index.js",
   "bin": {
