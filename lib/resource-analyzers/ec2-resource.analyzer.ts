@@ -23,9 +23,13 @@ export const analyzeEC2Resources = async (policies, resources: ServiceAllResourc
     }));
 
     regions.forEach(region => {
-        let node = new Node(region);
+        let node = new Node(region, {
+            type: 'region',
+        });
         relevantResourceTypes.forEach(resourceType => {
-            node.addChild(new Node(resourceType));
+            node.addChild(new Node(resourceType, {
+                type: 'resourceType',
+            }));
         });
         subTree.root.addChild(node);
     });
@@ -173,6 +177,7 @@ const evaluateResourceAccessFromStatements = (statements, resourceType: string, 
 
     let accessType = 'None';
 
+    //NOTE: Remove switch if not conflicting names 
     switch (resourceType) {
         case 'instance': {
             relevantActionPredicate = 'instance';

@@ -22,9 +22,13 @@ const analyzeEC2Resources = async (policies, resources, statements, profile, reg
         service: 'EC2',
     }));
     regions.forEach(region => {
-        let node = new graph_1.Node(region);
+        let node = new graph_1.Node(region, {
+            type: 'region',
+        });
         relevantResourceTypes.forEach(resourceType => {
-            node.addChild(new graph_1.Node(resourceType));
+            node.addChild(new graph_1.Node(resourceType, {
+                type: 'resourceType',
+            }));
         });
         subTree.root.addChild(node);
     });
@@ -130,6 +134,7 @@ const evaluateResourceAccessFromStatements = (statements, resourceType, resource
     });
     let relevantActionPredicate = '';
     let accessType = 'None';
+    //NOTE: Remove switch if not conflicting names 
     switch (resourceType) {
         case 'instance': {
             relevantActionPredicate = 'instance';
