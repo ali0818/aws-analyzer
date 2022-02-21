@@ -25,9 +25,13 @@ export const analyzeS3Resources = async (policies, resources: ServiceAllResource
     //Add all the region nodes to main subtree 
     // And add all relevant resourceType nodes to all the regions 
     regions.forEach(region => {
-        let node = new Node(region);
+        let node = new Node(region, {
+            type: 'region'
+        });
         relevantResourceTypes.forEach(resourceType => {
-            node.addChild(new Node(resourceType));
+            node.addChild(new Node(resourceType, {
+                type: 'resourceType'
+            }));
         });
         subTree.root.addChild(node);
     });
