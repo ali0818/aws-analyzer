@@ -16,7 +16,7 @@ export const CACHE_DIR = 'aws-resources-cache';
 clear();
 console.log(
     chalk.yellow(
-        figlet.textSync('EC2 Analyzer', { horizontalLayout: 'full' })
+        figlet.textSync('AWS CIEM Analyzer', { horizontalLayout: 'full' })
     )
 );
 

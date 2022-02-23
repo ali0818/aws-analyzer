@@ -35,7 +35,7 @@ const files_1 = require("./lib/files");
 exports.files = __importStar(require("./lib/files"));
 exports.CACHE_DIR = 'aws-resources-cache';
 (0, clear_1.default)();
-console.log(chalk_1.default.yellow(figlet_1.default.textSync('EC2 Analyzer', { horizontalLayout: 'full' })));
+console.log(chalk_1.default.yellow(figlet_1.default.textSync('AWS CIEM Analyzer', { horizontalLayout: 'full' })));
 const baseArgs = () => {
     return yargs_1.default
         .demandOption('profile')
