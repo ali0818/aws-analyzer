@@ -1,10 +1,10 @@
 {
-  "name": "aws-analyzer",
+  "name": "ciem-aws",
   "version": "0.0.31",
   "description": "Analyze AWS resources from all regions",
   "main": "bin/index.js",
   "bin": {
-    "aws-analyzer": "bin/index.js"
+    "ciem-aws": "bin/index.js"
   },
   "scripts": {
     "start": "npm run build:win && node ./dist/index.js",
