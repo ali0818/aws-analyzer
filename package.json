@@ -1,10 +1,10 @@
 {
-  "name": "aws-analyzer",
+  "name": "aws-analyzer2",
   "version": "0.0.30",
   "description": "Analyze AWS resources from all regions",
   "main": "bin/index.js",
   "bin": {
-    "aws-analyzer": "bin/index.js"
+    "aws-analyzer2": "bin/index.js"
   },
   "scripts": {
     "start": "npm run build:win && node ./dist/index.js",
@@ -15,10 +15,12 @@
   },
   "keywords": [
     "ec2",
+    "rds",
+    "s3",
     "analyzer",
     "aws"
   ],
-  "author": "Manish Singh",
+  "author": "Firdoesh Ali Khan",
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.52.0",
