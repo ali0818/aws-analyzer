@@ -1,6 +1,7 @@
 import { ARN_REGEX } from "../constants/regex";
 import { ServiceAllResourceReturnType } from "../resource.service";
 import { Node, Tree } from "../utils/graph";
+import chalk from 'chalk';
 
 export const CACHE_FILE_NAME: string = 'resource-cache.json';
 export const TREE_CACHE_FILE_NAME = 'resource-tree-cache.json';
@@ -10,7 +11,7 @@ export const TREE_CACHE_FILE_NAME = 'resource-tree-cache.json';
 /**
  * Generates a resource map and a tree node for a resource string and resource Type
  * @param resourceString policy document resource string
- * @param serviceResources all resources of a service (ec2, iam, s3)
+ * @param serviceResources all resources of a service (ec2, iam, s3, etc)
  * @param relevantResources relevant resource  map
  * @param regions all the regions to look for resources in
  * @param subTree a subTree to cultivate 
@@ -178,6 +179,7 @@ export const getResourcesFromResourceString = (resourceString: string, resources
                     return resource[primaryKey] == resourceId;
                 });
             }
+
         } else {
             if (resourceId == '*') {
                 _resources = resources[type].regionMap[region];
@@ -207,21 +209,27 @@ export const getResourcesFromResourceString = (resourceString: string, resources
  * @returns 
  */
 export const removeEmptyResourceNodes = (tree: Tree, regions: string[], relevantResourceTypes: string[]) => {
-    regions.forEach(region => {
-        let node = tree.getNode(region);
-        let totalChildren = 0;
-        relevantResourceTypes.forEach(resourceType => {
-            let resourceNode = node.getChildByName(resourceType);
-            if (resourceNode && resourceNode.children.length == 0) {
-                node.removeNode(resourceNode);
+    try {
+        regions.forEach(region => {
+            let node = tree.getNode(region);
+            let totalChildren = 0;
+            relevantResourceTypes.forEach(resourceType => {
+                let resourceNode = node.getChildByName(resourceType);
+                if (resourceNode && resourceNode.children.length == 0) {
+                    node.removeNode(resourceNode);
+                }
+                totalChildren += resourceNode.calculateTotalChildren();
+            });
+
+            if (totalChildren == 0) {
+                tree.root.removeNode(node);
             }
-            totalChildren += resourceNode.calculateTotalChildren();
         });
 
-        if (totalChildren == 0) {
-            tree.root.removeNode(node);
-        }
-    });
-
-    return tree;
+        return tree;
+    } catch (error) {
+        console.error(`Error removing empty resource nodes`);
+        console.error(chalk.red(error));
+        return tree;
+    }
 }

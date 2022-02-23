@@ -1,14 +1,18 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.removeEmptyResourceNodes = exports.getResourcesFromResourceString = exports.getResourceDetailsFromResourceString = exports.generateResourceMapForResourceType = exports.TREE_CACHE_FILE_NAME = exports.CACHE_FILE_NAME = void 0;
 const regex_1 = require("../constants/regex");
 const graph_1 = require("../utils/graph");
+const chalk_1 = __importDefault(require("chalk"));
 exports.CACHE_FILE_NAME = 'resource-cache.json';
 exports.TREE_CACHE_FILE_NAME = 'resource-tree-cache.json';
 /**
  * Generates a resource map and a tree node for a resource string and resource Type
  * @param resourceString policy document resource string
- * @param serviceResources all resources of a service (ec2, iam, s3)
+ * @param serviceResources all resources of a service (ec2, iam, s3, etc)
  * @param relevantResources relevant resource  map
  * @param regions all the regions to look for resources in
  * @param subTree a subTree to cultivate
@@ -180,21 +184,28 @@ exports.getResourcesFromResourceString = getResourcesFromResourceString;
  * @returns
  */
 const removeEmptyResourceNodes = (tree, regions, relevantResourceTypes) => {
-    regions.forEach(region => {
-        let node = tree.getNode(region);
-        let totalChildren = 0;
-        relevantResourceTypes.forEach(resourceType => {
-            let resourceNode = node.getChildByName(resourceType);
-            if (resourceNode && resourceNode.children.length == 0) {
-                node.removeNode(resourceNode);
+    try {
+        regions.forEach(region => {
+            let node = tree.getNode(region);
+            let totalChildren = 0;
+            relevantResourceTypes.forEach(resourceType => {
+                let resourceNode = node.getChildByName(resourceType);
+                if (resourceNode && resourceNode.children.length == 0) {
+                    node.removeNode(resourceNode);
+                }
+                totalChildren += resourceNode.calculateTotalChildren();
+            });
+            if (totalChildren == 0) {
+                tree.root.removeNode(node);
             }
-            totalChildren += resourceNode.calculateTotalChildren();
         });
-        if (totalChildren == 0) {
-            tree.root.removeNode(node);
-        }
-    });
-    return tree;
+        return tree;
+    }
+    catch (error) {
+        console.error(`Error removing empty resource nodes`);
+        console.error(chalk_1.default.red(error));
+        return tree;
+    }
 };
 exports.removeEmptyResourceNodes = removeEmptyResourceNodes;
 //# sourceMappingURL=analyzer-utils.js.map

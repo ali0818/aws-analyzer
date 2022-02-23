@@ -1,8 +1,12 @@
+import { DescribeTableCommand, DynamoDBClient, ListTablesCommandOutput, paginateListTables, TableDescription } from "@aws-sdk/client-dynamodb";
 import { EC2Client, paginateDescribeInstances, paginateDescribeNatGateways, paginateDescribeSecurityGroups, paginateDescribeVpcs } from "@aws-sdk/client-ec2";
+import { FunctionConfiguration, Lambda, LambdaClient, paginateListFunctions } from "@aws-sdk/client-lambda";
+import { RDSClient, paginateDescribeDBInstances } from "@aws-sdk/client-rds";
 import { GetBucketAclCommand, GetBucketLocationCommand, GetBucketPolicyCommand, ListBucketsCommand, ListBucketsCommandInput, S3Client } from '@aws-sdk/client-s3';
 import { fromIni } from "@aws-sdk/credential-providers";
 import chalk from "chalk";
 import { Spinner } from "clui";
+import { table } from "console";
 
 const RESOURCE_CLIENT_NAMES: string[] = [
     'ec2',
@@ -18,6 +22,8 @@ export type ResourceTypeReturnType = {
     metadata: { primaryKey: string }
 };
 
+
+
 //Map like {}
 export type ServiceAllResourceReturnType = { [serviceName: string]: ResourceTypeReturnType }
 
@@ -31,15 +37,24 @@ export class ResourceService {
     _initializeResourceGetters() {
         const ec2 = new EC2ResourceGetter<EC2Client>(this.profile, this.regions);
         const s3 = new S3ResourceGetter<S3Client>(this.profile, this.regions);
+        const lambda = new LambdaResourceGetter<LambdaClient>(this.profile, this.regions);
+        const rds = new RDSResourceGetter<RDSClient>(this.profile, this.regions);
+        const dynamoDB = new DynamoDbResourceGetter<DynamoDBClient>(this.profile, this.regions);
 
         this.resourceGetters['ec2'] = ec2;
         this.resourceGetters['s3'] = s3;
+        this.resourceGetters['lambda'] = lambda;
+        this.resourceGetters['rds'] = rds;
+        this.resourceGetters['dynamodb'] = dynamoDB;
     }
 
     async getAllResources() {
         return {
             ec2: await this.resourceGetters['ec2'].getAllResources(),
-            s3: await this.resourceGetters['s3'].getAllResources()
+            s3: await this.resourceGetters['s3'].getAllResources(),
+            lambda: await this.resourceGetters['lambda'].getAllResources(),
+            rds: await this.resourceGetters['rds'].getAllResources(),
+            dynamodb: await this.resourceGetters['dynamodb'].getAllResources()
         }
     }
 }
@@ -281,5 +296,148 @@ export class S3ResourceGetter<T> extends ResourceGetter<T> implements IResourceG
         }
 
         return { all: buckets, regionMap: regionBucketsMap, metadata: { primaryKey: 'Name' } };
+    }
+}
+
+export class LambdaResourceGetter<T> extends ResourceGetter<T> implements IResourceGetter {
+    constructor(protected profile: string, protected regions: string[]) {
+        super(profile, regions, LambdaClient);
+    }
+
+    async getAllResources(): Promise<{ [key: string]: ResourceTypeReturnType }> {
+        console.log(chalk.yellow('\nGetting all Lambda resources...\n'));
+
+        return {
+            function: await this.getAllFunctions()
+        }
+    }
+
+    async getAllFunctions(): Promise<ResourceTypeReturnType> {
+        let paginator = await paginateListFunctions({
+            client: this.clients[this.regions[0]]
+        }, {
+
+        });
+
+        let functions: FunctionConfiguration[] = [];
+
+        let regionMap = {};
+        for (let region of this.regions) {
+            let _functions = [];
+            for await (const page of paginator) {
+                functions.push(...page.Functions);
+
+                _functions.push(...page.Functions);
+            }
+            regionMap[region] = _functions;
+        }
+
+        Object.keys(regionMap)
+            .forEach(region => {
+                console.log(chalk.green(`Total functions in ${region}: ${regionMap[region].length}`));
+            });
+
+
+        return {
+            all: functions,
+            regionMap: regionMap,
+            metadata: { primaryKey: 'FunctionName' }
+        }
+    }
+}
+
+export class DynamoDbResourceGetter<T> extends ResourceGetter<T> implements IResourceGetter {
+    constructor(protected profile: string, protected regions: string[]) {
+        super(profile, regions, DynamoDBClient);
+    }
+
+    async getAllResources(): Promise<{ [key: string]: ResourceTypeReturnType }> {
+        console.log(chalk.yellow('\nGetting all DynamoDB resources...\n'));
+
+        return {
+            table: await this.getAllTables()
+        }
+    }
+
+    async getAllTables(): Promise<ResourceTypeReturnType> {
+        let paginator = await paginateListTables({
+            client: this.clients[this.regions[0]]
+        }, {
+
+        });
+
+        let tables: TableDescription[] = [];
+        let regionMap = {};
+
+        for (let region of this.regions) {
+            let _tables: TableDescription[] = [];
+            const client: DynamoDBClient = this.clients[region];
+            for await (const page of paginator) {
+                for (let i = 0; i < page.TableNames.length; i++) {
+                    let t = page.TableNames[i];
+
+                    let cmd = new DescribeTableCommand({
+                        TableName: t
+                    });
+
+                    let res = await client.send(cmd);
+                    tables.push(res.Table);
+                    _tables.push(res.Table);
+                }
+            }
+            regionMap[region] = _tables;
+        }
+
+        Object.keys(regionMap)
+            .forEach(region => {
+                console.log(chalk.green(`Total functions in ${region}: ${regionMap[region].length}`));
+            });
+
+
+        return {
+            all: tables,
+            regionMap: regionMap,
+            metadata: { primaryKey: 'TableId' }
+        }
+    }
+}
+
+export class RDSResourceGetter<T> extends ResourceGetter<T> implements IResourceGetter {
+    constructor(protected profile: string, protected regions: string[]) {
+        super(profile, regions, RDSClient);
+    }
+
+    async getAllResources(): Promise<{ [key: string]: ResourceTypeReturnType }> {
+        console.log(chalk.yellow('\nGetting all RDS resources...\n'));
+
+        return {
+            dbinstance: await this.getAllDBInstances()
+        }
+    }
+
+
+    async getAllDBInstances(): Promise<ResourceTypeReturnType> {
+        let instances = [];
+        let regionMap = {};
+        for (let region of this.regions) {
+            const client: RDSClient = this.clients[region];
+
+            const paginator = paginateDescribeDBInstances({
+                client: client
+            }, {});
+            const _instances = [];
+            for await (const page of paginator) {
+                instances.push(...page.DBInstances);
+                _instances.push(...page.DBInstances);
+            }
+
+            regionMap[region] = _instances;
+        }
+
+        return {
+            all: instances,
+            regionMap: regionMap,
+            metadata: { primaryKey: 'DBInstanceIdentifier' }
+        }
     }
 }

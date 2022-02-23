@@ -9,7 +9,10 @@ import { ADMIN_POLICY } from "./constants/policies";
 import { ARN_REGEX } from "./constants/regex";
 import { cacheExists, loadCache, saveCache } from "./files";
 import { IamService } from "./iam.service";
+import { analyzeDynamodbResources } from "./resource-analyzers/dynamodb-resource.analyzer";
 import { analyzeEC2Resources } from "./resource-analyzers/ec2-resource.analyzer";
+import { analyzerLambdaResources } from "./resource-analyzers/lambda-resource.analyzer";
+import { analyzerRDSResources } from "./resource-analyzers/rds-resource-analyzer";
 import { analyzeS3Resources } from "./resource-analyzers/s3-resource.analyzer";
 import { ResourceService, ResourceTypeReturnType, ServiceAllResourceReturnType } from "./resource.service";
 import { ResourceGroupsTaggingService } from "./resourcegroupstagging.service";
@@ -34,7 +37,7 @@ export async function analyzeResources(profile: string, regions: string[], refre
 
     const { totalResources, regionResourcesMap } = await getAllResources(profile, regions);
 
-    const mainTree = new Tree(`${users.length} Users`, new Node(`${users.length} Users`, {
+    const mainTree = new Tree(`All IAM Users (${users.length})`, new Node(`${users.length} Users`, {
         type: "root"
     }));
 
@@ -159,7 +162,11 @@ const initializeRegionalResourceTaggingClients = (profile: string, regions: stri
                         }
  */
 const analyzeResourceAndPolicies = async (policies, profile, regions, user: User, allResources:
-    { ec2: ServiceAllResourceReturnType, s3: ServiceAllResourceReturnType }
+    {
+        ec2: ServiceAllResourceReturnType, s3: ServiceAllResourceReturnType,
+        rds: ServiceAllResourceReturnType, lambda: ServiceAllResourceReturnType,
+        dynamodb: ServiceAllResourceReturnType,
+    }
 ): Promise<Tree> => {
     console.log(chalk.yellow('Analyzing Resources and policies'));
     console.log(chalk.yellow('This will create a resource structure tree for the current user'));
@@ -202,6 +209,17 @@ const analyzeResourceAndPolicies = async (policies, profile, regions, user: User
         //FOR S3
         const { s3Subtree } = await analyzeS3Resources(policies, allResources.s3, statements, profile, regions);
         mainTree.root.addChild(s3Subtree.root);
+
+        //FOR RDS
+        const { rdsSubtree } = await analyzerRDSResources(policies, allResources.rds, statements, profile, regions);
+        mainTree.root.addChild(rdsSubtree.root);
+        //For Lambda
+        const { lambdaSubtree } = await analyzerLambdaResources(policies, allResources.lambda, statements, profile, regions);
+        mainTree.root.addChild(lambdaSubtree.root);
+
+        //For DynamoDB
+        const { dynamodbSubtree } = await analyzeDynamodbResources(policies, allResources.dynamodb, statements, profile, regions);
+        mainTree.root.addChild(dynamodbSubtree.root);
 
         return mainTree;
     } catch (error) {

@@ -10,7 +10,10 @@ const __1 = require("..");
 const policies_1 = require("./constants/policies");
 const files_1 = require("./files");
 const iam_service_1 = require("./iam.service");
+const dynamodb_resource_analyzer_1 = require("./resource-analyzers/dynamodb-resource.analyzer");
 const ec2_resource_analyzer_1 = require("./resource-analyzers/ec2-resource.analyzer");
+const lambda_resource_analyzer_1 = require("./resource-analyzers/lambda-resource.analyzer");
+const rds_resource_analyzer_1 = require("./resource-analyzers/rds-resource-analyzer");
 const s3_resource_analyzer_1 = require("./resource-analyzers/s3-resource.analyzer");
 const resource_service_1 = require("./resource.service");
 const resourcegroupstagging_service_1 = require("./resourcegroupstagging.service");
@@ -22,7 +25,7 @@ async function analyzeResources(profile, regions, refreshCache, cacheDir) {
     const users = await iamClient.getAllUsers();
     console.log(chalk_1.default.yellow(`Got ${users.length} users`));
     const { totalResources, regionResourcesMap } = await getAllResources(profile, regions);
-    const mainTree = new graph_1.Tree(`${users.length} Users`, new graph_1.Node(`${users.length} Users`, {
+    const mainTree = new graph_1.Tree(`All IAM Users (${users.length})`, new graph_1.Node(`${users.length} Users`, {
         type: "root"
     }));
     let _cacheExists = await (0, files_1.cacheExists)(CACHE_FILE_NAME, profile);
@@ -153,6 +156,15 @@ const analyzeResourceAndPolicies = async (policies, profile, regions, user, allR
         //FOR S3
         const { s3Subtree } = await (0, s3_resource_analyzer_1.analyzeS3Resources)(policies, allResources.s3, statements, profile, regions);
         mainTree.root.addChild(s3Subtree.root);
+        //FOR RDS
+        const { rdsSubtree } = await (0, rds_resource_analyzer_1.analyzerRDSResources)(policies, allResources.rds, statements, profile, regions);
+        mainTree.root.addChild(rdsSubtree.root);
+        //For Lambda
+        const { lambdaSubtree } = await (0, lambda_resource_analyzer_1.analyzerLambdaResources)(policies, allResources.lambda, statements, profile, regions);
+        mainTree.root.addChild(lambdaSubtree.root);
+        //For DynamoDB
+        const { dynamodbSubtree } = await (0, dynamodb_resource_analyzer_1.analyzeDynamodbResources)(policies, allResources.dynamodb, statements, profile, regions);
+        mainTree.root.addChild(dynamodbSubtree.root);
         return mainTree;
     }
     catch (error) {

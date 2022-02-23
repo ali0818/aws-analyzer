@@ -1,10 +1,10 @@
 {
-  "name": "aws-analyzer2",
-  "version": "0.0.29",
+  "name": "aws-analyzer",
+  "version": "0.0.30",
   "description": "Analyze AWS resources from all regions",
   "main": "bin/index.js",
   "bin": {
-    "aws-analyzer2": "bin/index.js"
+    "aws-analyzer": "bin/index.js"
   },
   "scripts": {
     "start": "npm run build:win && node ./dist/index.js",
@@ -18,11 +18,15 @@
     "analyzer",
     "aws"
   ],
-  "author": "Firdoesh Ali Khan",
+  "author": "Manish Singh",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.52.0",
     "@aws-sdk/client-ec2": "^3.43.0",
+    "@aws-sdk/client-eks": "^3.52.0",
     "@aws-sdk/client-iam": "^3.43.0",
+    "@aws-sdk/client-lambda": "^3.52.0",
+    "@aws-sdk/client-rds": "^3.52.0",
     "@aws-sdk/client-resource-groups-tagging-api": "^3.43.0",
     "@aws-sdk/client-s3": "^3.44.0",
     "@aws-sdk/credential-providers": "^3.43.0",
