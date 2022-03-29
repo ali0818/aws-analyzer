@@ -1,9 +1,13 @@
 import {
-    AttachedPolicy, GetGroupPolicyCommand, GetPolicyVersionCommand, GetUserCommand,
+    AttachedPolicy, GetGroupPolicyCommand, GetPolicyCommand, GetPolicyVersionCommand, GetRolePolicyCommand, GetUserCommand,
     GetUserPolicyCommand, IAMClient, ListAttachedGroupPoliciesCommand, ListAttachedUserPoliciesCommand,
-    ListGroupPoliciesCommand, ListGroupsForUserCommand, ListPolicyVersionsCommand, ListUserPoliciesCommand,
+    ListGroupPoliciesCommand, ListGroupsForUserCommand, ListPolicyVersionsCommand, ListRolesCommand, ListUserPoliciesCommand,
+    paginateListAttachedRolePolicies,
+    paginateListRolePolicies,
+    paginateListRoles,
     paginateListUsers,
     PolicyDetail,
+    Role,
     User
 } from "@aws-sdk/client-iam";
 import { fromIni } from "@aws-sdk/credential-providers";
@@ -11,6 +15,12 @@ import chalk from "chalk";
 import { Spinner } from "clui";
 
 export type AttachedPolicyWithDocument = AttachedPolicy & { Document: string };
+
+export type PolicyWithDocument = {
+    Document: any,
+    Name: string,
+    Arn?: string,
+}
 
 export class IamService {
     profile: string;
@@ -29,6 +39,115 @@ export class IamService {
                 profile: this.profile,
             })
         });
+    }
+
+    /**
+     * Get all the roles present in the account
+     */
+    async getAllRoles() {
+        try {
+            let roles: Role[] = [];
+            const paginator = paginateListRoles({ client: this.client }, {});
+
+            for await (const role of paginator) {
+                roles = roles.concat(role.Roles);
+            }
+
+            return roles;
+        } catch (error) {
+            console.error(chalk.red(error));
+        }
+    }
+
+    /**
+     *Get all the policies attached to a role
+     */
+    async getAllRolesWithPolicies() {
+        try {
+            let roles = await this.getAllRoles();
+
+            for (let i = 0; i < roles.length; i++) {
+                let role = roles[i];
+                let policies = await this.getAllAttachedRolePolicies(role);
+                console.log(chalk.green(`GOT ${policies.length} Policies for Role ${role.RoleName}`));
+            }
+
+        } catch (error) {
+            console.error(chalk.red(error));
+        }
+    }
+
+    /**
+     * Get all attached policies to a role
+     * @param role Role to fetch policies for 
+     * @returns list of attached policies
+     */
+    async getAllAttachedRolePolicies(role: Role): Promise<PolicyWithDocument[]> {
+        let spinner = new Spinner(chalk.blue(`Getting attached policies for role ${role.RoleName}...`));
+        try {
+            spinner.start();
+            let policies: AttachedPolicy[] = [];
+
+            const paginator = paginateListAttachedRolePolicies({ client: this.client }, { RoleName: role.RoleName });
+
+            for await (const policy of paginator) {
+                policies = policies.concat(policy.AttachedPolicies);
+            }
+            let policyDocs: PolicyWithDocument[] = [];
+            for (let i = 0; i < policies.length; i++) {
+                let doc = await this.getPolicyDocument(policies[i].PolicyArn);
+                policyDocs.push({ Name: policies[i].PolicyName, Document: doc,Arn: policies[i].PolicyArn });
+            }
+
+            return policyDocs;
+        } catch (error) {
+            console.error(chalk.red(`Error getting attached policies`));
+            console.error(chalk.red(error));
+        } finally {
+            spinner.stop();
+        }
+    }
+
+    async getAllPoliciesForRole(role: Role): Promise<PolicyWithDocument[]> {
+        let spinner = new Spinner(chalk.blue(`Getting policies for role ${role.RoleName}...`));
+        try {
+            spinner.start();
+            let policies: string[] = [];
+            const paginator = paginateListRolePolicies({ client: this.client }, { RoleName: role.RoleName });
+
+            for await (const policy of paginator) {
+                policies = policies.concat(policy.PolicyNames);
+            }
+
+            let policyDocuments = [];
+            for (let i = 0; i < policies.length; i++) {
+                let _policy = policies[i];
+                let cmd = new GetRolePolicyCommand({
+                    PolicyName: _policy,
+                    RoleName: role.RoleName
+                });
+
+                let response = await this.client.send(cmd);
+                let doc = response.PolicyDocument;
+
+                let policyDocument: PolicyWithDocument = {
+                    Name: _policy,
+                    Document: doc
+                };
+
+                policyDocuments.push(policyDocument);
+            }
+
+            let attachedPolicies = await this.getAllAttachedRolePolicies(role);
+
+            policyDocuments = policyDocuments.concat(attachedPolicies);
+
+            return policyDocuments;
+        } catch (error) {
+            console.error(chalk.red(error));
+        } finally {
+            spinner.stop();
+        }
     }
 
     /**

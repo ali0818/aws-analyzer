@@ -1,6 +1,9 @@
 import { ServiceAllResourceReturnType } from "../resource.service";
 import { Node, Tree } from "../utils/graph";
-import { generateResourceMapForResourceType, getResourceDetailsFromResourceString, removeEmptyResourceNodes } from "./analyzer-utils";
+import {
+    generateResourceMapForResourceType, getResourceDetailsFromResourceString,
+    removeEmptyResourceNodes
+} from "./analyzer-utils";
 
 /**
  * Anayyze S3 resources fetched 

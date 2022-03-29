@@ -1,13 +1,12 @@
-# AWS-Analyzer
+# CIEM-AWS
 
 ### Analyses ec2 instances from all regions in the AWS account.
 ### Analyses all other resources
 
 ### NOTE: Complete Documentation
 
-![CLI Usage](https://raw.githubusercontent.com/manishsingh10895/ec2-analyzer/master/images/usage.png "CLI Usage")
 # Installation
-npm i -g aws-analyzer
+npm i -g ciem-aws
 
 ## Requirements
 * This CLI requires aws credentials in ~/.aws/credentials file to work for the profile specified.

@@ -1,47 +1,49 @@
 {
-  "name": "aws-analyzer",
-  "version": "0.0.30",
-  "description": "Analyze AWS resources from all regions",
-  "main": "bin/index.js",
-  "bin": {
-    "aws-analyzer": "bin/index.js"
-  },
-  "scripts": {
-    "start": "npm run build:win && node ./dist/index.js",
-    "build": "rm -rf ./dist && tsc",
-    "build:win": "pwsh ./build.ps1",
-    "check": "npm run build:win && node ./bin/index.js resources --profile default --refreshcache",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "ec2",
-    "analyzer",
-    "aws"
-  ],
-  "author": "Manish Singh",
-  "license": "MIT",
-  "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.52.0",
-    "@aws-sdk/client-ec2": "^3.43.0",
-    "@aws-sdk/client-eks": "^3.52.0",
-    "@aws-sdk/client-iam": "^3.43.0",
-    "@aws-sdk/client-lambda": "^3.52.0",
-    "@aws-sdk/client-rds": "^3.52.0",
-    "@aws-sdk/client-resource-groups-tagging-api": "^3.43.0",
-    "@aws-sdk/client-s3": "^3.44.0",
-    "@aws-sdk/credential-providers": "^3.43.0",
-    "@types/yargs": "^17.0.7",
-    "chalk": "4.1.2",
-    "clear": "^0.1.0",
-    "clui": "^0.3.6",
-    "figlet": "^1.5.2",
-    "lodash": "^4.17.21",
-    "uuid": "^8.3.2",
-    "yargs": "^17.2.1"
-  },
-  "devDependencies": {
-    "@types/clui": "^0.3.1",
-    "@types/node": "^16.11.11",
-    "sonarqube-scanner": "^2.8.1"
-  }
+    "name": "ciem-aws",
+    "version": "0.0.33",
+    "description": "Analyze AWS resources from all regions",
+    "main": "bin/index.js",
+    "bin": {
+        "ciem-aws": "bin/index.js"
+    },
+    "scripts": {
+        "start": "npm run build:win && node ./dist/index.js",
+        "build": "rm -rf ./dist && tsc",
+        "build:win": "pwsh ./build.ps1",
+        "check": "npm run build:win && node ./bin/index.js resources --profile default --refreshcache",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "ec2",
+        "rds",
+        "s3",
+        "analyzer",
+        "aws"
+    ],
+    "author": "Firdoesh Ali Khan",
+    "license": "MIT",
+    "dependencies": {
+        "@aws-sdk/client-dynamodb": "^3.52.0",
+        "@aws-sdk/client-ec2": "^3.43.0",
+        "@aws-sdk/client-eks": "^3.52.0",
+        "@aws-sdk/client-iam": "^3.43.0",
+        "@aws-sdk/client-lambda": "^3.52.0",
+        "@aws-sdk/client-rds": "^3.52.0",
+        "@aws-sdk/client-resource-groups-tagging-api": "^3.43.0",
+        "@aws-sdk/client-s3": "^3.44.0",
+        "@aws-sdk/credential-providers": "^3.43.0",
+        "@types/yargs": "^17.0.7",
+        "chalk": "4.1.2",
+        "clear": "^0.1.0",
+        "clui": "^0.3.6",
+        "figlet": "^1.5.2",
+        "lodash": "^4.17.21",
+        "uuid": "^8.3.2",
+        "yargs": "^17.2.1"
+    },
+    "devDependencies": {
+        "@types/clui": "^0.3.1",
+        "@types/node": "^16.11.11",
+        "sonarqube-scanner": "^2.8.1"
+    }
 }
