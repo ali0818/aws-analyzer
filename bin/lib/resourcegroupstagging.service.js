@@ -34,8 +34,6 @@ class ResourceGroupsTaggingService {
                     PaginationToken: response ? response.PaginationToken : undefined,
                 });
                 response = await this.client.send(command);
-                response.ResourceTagMappingList.forEach(resource => {
-                });
                 resources.push(...response.ResourceTagMappingList);
             } while (response === null || response === void 0 ? void 0 : response.PaginationToken);
             return resources;

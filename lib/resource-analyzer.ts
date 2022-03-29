@@ -1,5 +1,5 @@
 import { EC2, GetConsoleOutputResult } from "@aws-sdk/client-ec2";
-import { User } from "@aws-sdk/client-iam";
+import { Role, RoleDetail, User } from "@aws-sdk/client-iam";
 import chalk from "chalk";
 import { Spinner } from "clui";
 import { fstat } from "fs";
@@ -21,6 +21,12 @@ import { Node, Tree } from "./utils/graph";
 const CACHE_FILE_NAME: string = 'resource-cache.json';
 const TREE_CACHE_FILE_NAME = 'resource-tree-cache.json';
 
+export type AllResources = {
+    ec2: ServiceAllResourceReturnType, s3: ServiceAllResourceReturnType,
+    rds: ServiceAllResourceReturnType, lambda: ServiceAllResourceReturnType,
+    dynamodb: ServiceAllResourceReturnType,
+}
+
 type ResourceRegexMatchResult = {
     principal: string,
     region: string,
@@ -32,12 +38,13 @@ export async function analyzeResources(profile: string, regions: string[], refre
     const iamClient = new IamService(profile);
 
     const users = await iamClient.getAllUsers();
+    const roles = await iamClient.getAllRoles();
 
     console.log(chalk.yellow(`Got ${users.length} users`));
 
-    const { totalResources, regionResourcesMap } = await getAllResources(profile, regions);
+    // const { totalResources, regionResourcesMap } = await getAllResources(profile, regions);
 
-    const mainTree = new Tree(`All IAM Users (${users.length})`, new Node(`${users.length} Users`, {
+    const mainTree = new Tree(`ROOT`, new Node(`ROOT`, {
         type: "root"
     }));
 
@@ -58,6 +65,21 @@ export async function analyzeResources(profile: string, regions: string[], refre
     } else {
         const resourceService = new ResourceService(profile, regions);
         const allResources = await resourceService.getAllResources();
+        let regionResourceMap = {};
+
+        Object.keys(allResources).forEach(principal => {
+            Object.keys(allResources[principal]).forEach(service => {
+                regionResourceMap[service] = allResources[principal][service].regionMap;
+            });
+        });
+
+        let userDetails = {};
+        const userNode = new Node('Users', {
+            type: 'users',
+            details: {
+                count: users.length
+            }
+        });
 
         for (let i = 0; i < users.length; i++) {
             try {
@@ -65,38 +87,72 @@ export async function analyzeResources(profile: string, regions: string[], refre
 
                 const policies = await iamClient.listAllPoliciesForUser(user);
 
-                if (!details[user.UserId]) {
-                    details[user.UserId] = {};
+                if (!userDetails[user.UserId]) {
+                    userDetails[user.UserId] = {};
                 }
 
-                details[user.UserId].policies = policies;
+                userDetails[user.UserId].policies = policies;
 
                 console.log(chalk.green('Got all the policies'));
 
-                details[user.UserId].resources = {
-                    total: totalResources,
-                    regionResourcesMap
+                userDetails[user.UserId].resources = {
+                    total: allResources,
+                    regionResourceMap
                 }
 
-                console.log(chalk.green('Got all the resources'));
-
-                console.log(chalk.underline.green(`There are total {${totalResources.length}} resources in all the regions`));
-
-                await saveCache(CACHE_FILE_NAME, details, profile, cacheDir);
-                console.log(chalk.yellow('Saved Policies data to cache'));
-
-                const userTree = await analyzeResourceAndPolicies(policies, profile, regions, user, allResources);
-
-                mainTree.root.addChild(userTree.root);
+                const userTree = await analyzeResourceAndPoliciesForUser(policies, profile, regions, user, allResources);
+                userNode.addChild(userTree.root);
             } catch (error) {
                 console.error(chalk.red(`Error: ${error.message}`));
                 console.log(error);
                 files.logError(error, profile, cacheDir);
             }
         }
-    }
 
-    await saveCache(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile, cacheDir);
+        let rolesDetails = {};
+        const rolesNode = new Node('Roles', {
+            type: 'roles',
+            details: {
+                count: roles.length
+            }
+        });
+
+        for (let i = 0; i < roles.length; i++) {
+            try {
+                const role = roles[i];
+
+                const policies = await iamClient.getAllPoliciesForRole(role);
+
+                if (!rolesDetails[role.RoleId]) {
+                    rolesDetails[role.RoleId] = {};
+                }
+
+                rolesDetails[role.RoleId].policies = policies;
+
+                console.log(chalk.green('Got all the policies'));
+
+                rolesDetails[role.RoleId].resources = {
+                    total: allResources,
+                    regionResourceMap
+                }
+
+                const roleTree = await analyzeResourceAndPoliciesForRole(policies, profile, regions, role, allResources);
+                rolesNode.addChild(roleTree.root);
+            } catch (error) {
+                console.error(chalk.red(`Error: ${error.message}`));
+                console.log(error);
+                files.logError(error, profile, cacheDir);
+            }
+        }
+
+        details.roles = rolesDetails;
+        details.users = userDetails;
+        mainTree.root.addChild(userNode);
+        mainTree.root.addChild(rolesNode);
+        await saveCache(CACHE_FILE_NAME, details, profile, cacheDir);
+        console.log(chalk.yellow('Saved Policies data to cache'));
+        await saveCache(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile, cacheDir);
+    }
 
     return {
         details,
@@ -144,6 +200,61 @@ const initializeRegionalResourceTaggingClients = (profile: string, regions: stri
     }
 };
 
+
+/**
+ * Analyze policies and generate resource tree for a role
+ * @param policies 
+ * @param profile 
+ * @param regions 
+ * @param role role to analyze
+ * @param allResources All resources in all regions
+ * @returns 
+ */
+export const analyzeResourceAndPoliciesForRole = async (policies, profile: string, regions: string[], role: Role, allResources: AllResources): Promise<Tree> => {
+    try {
+        console.log(chalk.yellow('Analyzing Resources and policies for role'));
+        console.log(chalk.yellow('This will create a resource structure tree for the current role'));
+
+        let mainTree = new Tree(`${role.RoleName}`, new Node(role.RoleName, {
+            type: 'role',
+            roleName: role.RoleName,
+            roleId: role.RoleId,
+        }));
+
+        return generateResourceTree(policies, profile, regions, mainTree, allResources);
+    } catch (error) {
+        console.error(chalk.red(`Error while generating resource tree for a role`));
+        console.log(chalk.red(error));
+    }
+}
+
+/**
+ * Analyze policies and generate resource tree for a user 
+ * @param policies 
+ * @param profile 
+ * @param regions list of regions available 
+ * @param user user to generate resource tree for
+ * @param allResources All resource available in all regions
+ * @returns 
+ */
+const analyzeResourceAndPoliciesForUser = async (policies, profile: string, regions: string[], user: User, allResources: AllResources): Promise<Tree> => {
+    console.log(chalk.yellow('Analyzing Resources and policies for user'));
+    console.log(chalk.yellow('This will create a resource structure tree for the current user'));
+    try {
+        let mainTree = new Tree(`${user.UserName}`, new Node(user.UserName, {
+            type: 'user',
+            userName: user.UserName,
+            userId: user.UserId,
+        }));
+
+        return await generateResourceTree(policies, profile, regions, mainTree, allResources);
+
+    } catch (error) {
+        console.error(chalk.red(`Error while generating user resource tree`));
+        console.log(error);
+    }
+}
+
 /**
  * 
  * @param policies List of all the policies related to a user
@@ -161,30 +272,15 @@ const initializeRegionalResourceTaggingClients = (profile: string, regions: stri
                                 }
                         }
  */
-const analyzeResourceAndPolicies = async (policies, profile, regions, user: User, allResources:
-    {
-        ec2: ServiceAllResourceReturnType, s3: ServiceAllResourceReturnType,
-        rds: ServiceAllResourceReturnType, lambda: ServiceAllResourceReturnType,
-        dynamodb: ServiceAllResourceReturnType,
-    }
-): Promise<Tree> => {
+const generateResourceTree = async (policies, profile: string, regions: string[], mainTree: Tree, allResources: AllResources): Promise<Tree> => {
     console.log(chalk.yellow('Analyzing Resources and policies'));
     console.log(chalk.yellow('This will create a resource structure tree for the current user'));
     let statements: any[] = [];
 
     let isAdmin = false;
 
-    const iamClient = new IamService(profile);
-
     // Get all the statements from all the policies
-    let spinner = new Spinner(`Getting all the resources for ${user.UserName}...`);
-
     try {
-        let mainTree = new Tree(`${user.UserName}`, new Node(user.UserName, {
-            type: 'user',
-            userName: user.UserName,
-            userId: user.UserId,
-        }));
 
         for (let i = 0; i < policies.length; i++) {
             const policy = policies[i];
@@ -199,7 +295,6 @@ const analyzeResourceAndPolicies = async (policies, profile, regions, user: User
             }
         }
 
-        console.log(chalk.yellow("\nFetched all required resources..."));
         console.log(chalk.yellow("Compiling Resource Tree\n"));
 
         //FOR EC2
@@ -223,8 +318,8 @@ const analyzeResourceAndPolicies = async (policies, profile, regions, user: User
 
         return mainTree;
     } catch (error) {
+        console.error(chalk.red(`Error generating resource tree`));
         console.error(chalk.red(error));
     } finally {
-        spinner.stop();
     }
 }

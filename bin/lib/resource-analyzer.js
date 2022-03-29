@@ -3,9 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.analyzeResources = void 0;
+exports.analyzeResourceAndPoliciesForRole = exports.analyzeResources = void 0;
 const chalk_1 = __importDefault(require("chalk"));
-const clui_1 = require("clui");
 const __1 = require("..");
 const policies_1 = require("./constants/policies");
 const files_1 = require("./files");
@@ -23,9 +22,10 @@ const TREE_CACHE_FILE_NAME = 'resource-tree-cache.json';
 async function analyzeResources(profile, regions, refreshCache, cacheDir) {
     const iamClient = new iam_service_1.IamService(profile);
     const users = await iamClient.getAllUsers();
+    const roles = await iamClient.getAllRoles();
     console.log(chalk_1.default.yellow(`Got ${users.length} users`));
-    const { totalResources, regionResourcesMap } = await getAllResources(profile, regions);
-    const mainTree = new graph_1.Tree(`All IAM Users (${users.length})`, new graph_1.Node(`${users.length} Users`, {
+    // const { totalResources, regionResourcesMap } = await getAllResources(profile, regions);
+    const mainTree = new graph_1.Tree(`ROOT`, new graph_1.Node(`ROOT`, {
         type: "root"
     }));
     let _cacheExists = await (0, files_1.cacheExists)(CACHE_FILE_NAME, profile);
@@ -42,25 +42,34 @@ async function analyzeResources(profile, regions, refreshCache, cacheDir) {
     else {
         const resourceService = new resource_service_1.ResourceService(profile, regions);
         const allResources = await resourceService.getAllResources();
+        let regionResourceMap = {};
+        Object.keys(allResources).forEach(principal => {
+            Object.keys(allResources[principal]).forEach(service => {
+                regionResourceMap[service] = allResources[principal][service].regionMap;
+            });
+        });
+        let userDetails = {};
+        const userNode = new graph_1.Node('Users', {
+            type: 'users',
+            details: {
+                count: users.length
+            }
+        });
         for (let i = 0; i < users.length; i++) {
             try {
                 const user = users[i];
                 const policies = await iamClient.listAllPoliciesForUser(user);
-                if (!details[user.UserId]) {
-                    details[user.UserId] = {};
+                if (!userDetails[user.UserId]) {
+                    userDetails[user.UserId] = {};
                 }
-                details[user.UserId].policies = policies;
+                userDetails[user.UserId].policies = policies;
                 console.log(chalk_1.default.green('Got all the policies'));
-                details[user.UserId].resources = {
-                    total: totalResources,
-                    regionResourcesMap
+                userDetails[user.UserId].resources = {
+                    total: allResources,
+                    regionResourceMap
                 };
-                console.log(chalk_1.default.green('Got all the resources'));
-                console.log(chalk_1.default.underline.green(`There are total {${totalResources.length}} resources in all the regions`));
-                await (0, files_1.saveCache)(CACHE_FILE_NAME, details, profile, cacheDir);
-                console.log(chalk_1.default.yellow('Saved Policies data to cache'));
-                const userTree = await analyzeResourceAndPolicies(policies, profile, regions, user, allResources);
-                mainTree.root.addChild(userTree.root);
+                const userTree = await analyzeResourceAndPoliciesForUser(policies, profile, regions, user, allResources);
+                userNode.addChild(userTree.root);
             }
             catch (error) {
                 console.error(chalk_1.default.red(`Error: ${error.message}`));
@@ -68,8 +77,43 @@ async function analyzeResources(profile, regions, refreshCache, cacheDir) {
                 __1.files.logError(error, profile, cacheDir);
             }
         }
+        let rolesDetails = {};
+        const rolesNode = new graph_1.Node('Roles', {
+            type: 'roles',
+            details: {
+                count: roles.length
+            }
+        });
+        for (let i = 0; i < roles.length; i++) {
+            try {
+                const role = roles[i];
+                const policies = await iamClient.getAllPoliciesForRole(role);
+                if (!rolesDetails[role.RoleId]) {
+                    rolesDetails[role.RoleId] = {};
+                }
+                rolesDetails[role.RoleId].policies = policies;
+                console.log(chalk_1.default.green('Got all the policies'));
+                rolesDetails[role.RoleId].resources = {
+                    total: allResources,
+                    regionResourceMap
+                };
+                const roleTree = await (0, exports.analyzeResourceAndPoliciesForRole)(policies, profile, regions, role, allResources);
+                rolesNode.addChild(roleTree.root);
+            }
+            catch (error) {
+                console.error(chalk_1.default.red(`Error: ${error.message}`));
+                console.log(error);
+                __1.files.logError(error, profile, cacheDir);
+            }
+        }
+        details.roles = rolesDetails;
+        details.users = userDetails;
+        mainTree.root.addChild(userNode);
+        mainTree.root.addChild(rolesNode);
+        await (0, files_1.saveCache)(CACHE_FILE_NAME, details, profile, cacheDir);
+        console.log(chalk_1.default.yellow('Saved Policies data to cache'));
+        await (0, files_1.saveCache)(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile, cacheDir);
     }
-    await (0, files_1.saveCache)(TREE_CACHE_FILE_NAME, { tree: mainTree.toJSON() }, profile, cacheDir);
     return {
         details,
         comprehensive: treeDetails
@@ -106,6 +150,57 @@ const initializeRegionalResourceTaggingClients = (profile, regions) => {
     };
 };
 /**
+ * Analyze policies and generate resource tree for a role
+ * @param policies
+ * @param profile
+ * @param regions
+ * @param role role to analyze
+ * @param allResources All resources in all regions
+ * @returns
+ */
+const analyzeResourceAndPoliciesForRole = async (policies, profile, regions, role, allResources) => {
+    try {
+        console.log(chalk_1.default.yellow('Analyzing Resources and policies for role'));
+        console.log(chalk_1.default.yellow('This will create a resource structure tree for the current role'));
+        let mainTree = new graph_1.Tree(`${role.RoleName}`, new graph_1.Node(role.RoleName, {
+            type: 'role',
+            roleName: role.RoleName,
+            roleId: role.RoleId,
+        }));
+        return generateResourceTree(policies, profile, regions, mainTree, allResources);
+    }
+    catch (error) {
+        console.error(chalk_1.default.red(`Error while generating resource tree for a role`));
+        console.log(chalk_1.default.red(error));
+    }
+};
+exports.analyzeResourceAndPoliciesForRole = analyzeResourceAndPoliciesForRole;
+/**
+ * Analyze policies and generate resource tree for a user
+ * @param policies
+ * @param profile
+ * @param regions list of regions available
+ * @param user user to generate resource tree for
+ * @param allResources All resource available in all regions
+ * @returns
+ */
+const analyzeResourceAndPoliciesForUser = async (policies, profile, regions, user, allResources) => {
+    console.log(chalk_1.default.yellow('Analyzing Resources and policies for user'));
+    console.log(chalk_1.default.yellow('This will create a resource structure tree for the current user'));
+    try {
+        let mainTree = new graph_1.Tree(`${user.UserName}`, new graph_1.Node(user.UserName, {
+            type: 'user',
+            userName: user.UserName,
+            userId: user.UserId,
+        }));
+        return await generateResourceTree(policies, profile, regions, mainTree, allResources);
+    }
+    catch (error) {
+        console.error(chalk_1.default.red(`Error while generating user resource tree`));
+        console.log(error);
+    }
+};
+/**
  *
  * @param policies List of all the policies related to a user
  * @param resources A map of resources with principal as key which in term contains an object which
@@ -122,20 +217,13 @@ const initializeRegionalResourceTaggingClients = (profile, regions) => {
                                 }
                         }
  */
-const analyzeResourceAndPolicies = async (policies, profile, regions, user, allResources) => {
+const generateResourceTree = async (policies, profile, regions, mainTree, allResources) => {
     console.log(chalk_1.default.yellow('Analyzing Resources and policies'));
     console.log(chalk_1.default.yellow('This will create a resource structure tree for the current user'));
     let statements = [];
     let isAdmin = false;
-    const iamClient = new iam_service_1.IamService(profile);
     // Get all the statements from all the policies
-    let spinner = new clui_1.Spinner(`Getting all the resources for ${user.UserName}...`);
     try {
-        let mainTree = new graph_1.Tree(`${user.UserName}`, new graph_1.Node(user.UserName, {
-            type: 'user',
-            userName: user.UserName,
-            userId: user.UserId,
-        }));
         for (let i = 0; i < policies.length; i++) {
             const policy = policies[i];
             if (policy.PolicyArn == policies_1.ADMIN_POLICY) {
@@ -148,7 +236,6 @@ const analyzeResourceAndPolicies = async (policies, profile, regions, user, allR
                 }
             }
         }
-        console.log(chalk_1.default.yellow("\nFetched all required resources..."));
         console.log(chalk_1.default.yellow("Compiling Resource Tree\n"));
         //FOR EC2
         const { ec2Subtree } = await (0, ec2_resource_analyzer_1.analyzeEC2Resources)(policies, allResources.ec2, statements, profile, regions);
@@ -168,10 +255,10 @@ const analyzeResourceAndPolicies = async (policies, profile, regions, user, allR
         return mainTree;
     }
     catch (error) {
+        console.error(chalk_1.default.red(`Error generating resource tree`));
         console.error(chalk_1.default.red(error));
     }
     finally {
-        spinner.stop();
     }
 };
 //# sourceMappingURL=resource-analyzer.js.map
