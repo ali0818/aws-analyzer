@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeEmptyResourceNodes = exports.getResourcesFromResourceString = exports.getResourceDetailsFromResourceString = exports.generateResourceMapForResourceType = exports.TREE_CACHE_FILE_NAME = exports.CACHE_FILE_NAME = void 0;
+exports.normalizePolicies = exports.removeEmptyResourceNodes = exports.getResourcesFromResourceString = exports.getResourceDetailsFromResourceString = exports.generateResourceMapForResourceType = exports.TREE_CACHE_FILE_NAME = exports.CACHE_FILE_NAME = void 0;
 const regex_1 = require("../constants/regex");
 const graph_1 = require("../utils/graph");
 const chalk_1 = __importDefault(require("chalk"));
@@ -208,4 +208,7 @@ const removeEmptyResourceNodes = (tree, regions, relevantResourceTypes) => {
     }
 };
 exports.removeEmptyResourceNodes = removeEmptyResourceNodes;
+const normalizePolicies = (policies) => {
+};
+exports.normalizePolicies = normalizePolicies;
 //# sourceMappingURL=analyzer-utils.js.map

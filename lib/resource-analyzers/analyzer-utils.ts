@@ -233,3 +233,7 @@ export const removeEmptyResourceNodes = (tree: Tree, regions: string[], relevant
         return tree;
     }
 }
+
+export const normalizePolicies = (policies) => {
+    
+}

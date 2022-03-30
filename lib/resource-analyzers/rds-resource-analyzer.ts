@@ -120,6 +120,7 @@ export const analyzerRDSResources = async (policies, resources: ServiceAllResour
                         if (!relevantResources[resourceType]) {
                             relevantResources[resourceType] = [];
                         }
+                        
                         generateResourceMapForResourceType(_resource,
                             resourceType,
                             rdsResources,

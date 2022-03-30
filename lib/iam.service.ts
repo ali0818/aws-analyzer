@@ -18,8 +18,8 @@ export type AttachedPolicyWithDocument = AttachedPolicy & { Document: string };
 
 export type PolicyWithDocument = {
     Document: any,
-    Name: string,
-    Arn?: string,
+    PolicyName: string,
+    PolicyArn?: string,
 }
 
 export class IamService {
@@ -96,7 +96,7 @@ export class IamService {
             let policyDocs: PolicyWithDocument[] = [];
             for (let i = 0; i < policies.length; i++) {
                 let doc = await this.getPolicyDocument(policies[i].PolicyArn);
-                policyDocs.push({ Name: policies[i].PolicyName, Document: doc,Arn: policies[i].PolicyArn });
+                policyDocs.push({ PolicyName: policies[i].PolicyName, Document: doc, PolicyArn: policies[i].PolicyArn });
             }
 
             return policyDocs;
@@ -119,7 +119,7 @@ export class IamService {
                 policies = policies.concat(policy.PolicyNames);
             }
 
-            let policyDocuments = [];
+            let policyDocuments: PolicyWithDocument[] = [];
             for (let i = 0; i < policies.length; i++) {
                 let _policy = policies[i];
                 let cmd = new GetRolePolicyCommand({
@@ -131,7 +131,7 @@ export class IamService {
                 let doc = response.PolicyDocument;
 
                 let policyDocument: PolicyWithDocument = {
-                    Name: _policy,
+                    PolicyName: _policy,
                     Document: doc
                 };
 
@@ -236,6 +236,7 @@ export class IamService {
     async getAllPoliciesUnderUser(user: User) {
         try {
             let policies = [];
+
             let userAttachedPolicies = await this._iteratePolicies((marker: string) => {
                 return this.client.send(new ListAttachedUserPoliciesCommand({
                     UserName: user.UserName,

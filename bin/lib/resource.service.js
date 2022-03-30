@@ -48,17 +48,20 @@ class ResourceService {
 }
 exports.ResourceService = ResourceService;
 class ResourceGetter {
-    constructor(profile, regions, ResourceClient) {
+    constructor(profile, regions, ResourceClient, endpoint) {
         this.profile = profile;
         this.regions = regions;
+        this.endpoint = endpoint;
         this.clients = {};
         this.regions.forEach(region => {
-            this.clients[region] = new ResourceClient({
-                credentials: (0, credential_providers_1.fromIni)({
-                    profile: this.profile,
-                }),
+            let config = {
                 region: region,
-            });
+                credentials: (0, credential_providers_1.fromIni)({ profile: this.profile }),
+            };
+            if (endpoint && typeof endpoint === 'function') {
+                config.endpoint = endpoint(region);
+            }
+            this.clients[region] = new ResourceClient(config);
         });
         this.ResourceClient = ResourceClient;
     }
@@ -84,14 +87,20 @@ class EC2ResourceGetter extends ResourceGetter {
         let regionSecurityGroupsMap = {};
         console.log(chalk_1.default.yellow('\nGetting all Security Groups...\n'));
         for (let region of this.regions) {
-            const ec2 = this.clients[region];
-            const pager = (0, client_ec2_1.paginateDescribeSecurityGroups)({ client: ec2 }, {});
-            let _securityGroups = [];
-            for await (const page of pager) {
-                _securityGroups = _securityGroups.concat(page.SecurityGroups);
+            try {
+                const ec2 = this.clients[region];
+                const pager = (0, client_ec2_1.paginateDescribeSecurityGroups)({ client: ec2 }, {});
+                let _securityGroups = [];
+                for await (const page of pager) {
+                    _securityGroups = _securityGroups.concat(page.SecurityGroups);
+                }
+                regionSecurityGroupsMap[region] = _securityGroups;
+                securityGroups = securityGroups.concat(..._securityGroups);
             }
-            regionSecurityGroupsMap[region] = _securityGroups;
-            securityGroups = securityGroups.concat(..._securityGroups);
+            catch (error) {
+                console.error(chalk_1.default.red(`Error while getting Security Groups for region ${region}`));
+                console.error(chalk_1.default.red(error));
+            }
         }
         console.log(chalk_1.default.yellow('\Got all Security Groups...\n'));
         return {
@@ -106,14 +115,20 @@ class EC2ResourceGetter extends ResourceGetter {
         console.log(chalk_1.default.yellow('\nGetting all VPCs...\n'));
         try {
             for (let region of this.regions) {
-                const ec2 = this.clients[region];
-                const pager = (0, client_ec2_1.paginateDescribeVpcs)({ client: ec2 }, {});
-                let _vpcs = [];
-                for await (const page of pager) {
-                    _vpcs.push(...page.Vpcs);
+                try {
+                    const ec2 = this.clients[region];
+                    const pager = (0, client_ec2_1.paginateDescribeVpcs)({ client: ec2 }, {});
+                    let _vpcs = [];
+                    for await (const page of pager) {
+                        _vpcs.push(...page.Vpcs);
+                    }
+                    regionVPCsMap[region] = _vpcs;
+                    vpcs = vpcs.concat(..._vpcs);
                 }
-                regionVPCsMap[region] = _vpcs;
-                vpcs = vpcs.concat(..._vpcs);
+                catch (error) {
+                    console.error(chalk_1.default.red(`Error while getting VPCs for region ${region}`));
+                    console.error(chalk_1.default.red(error));
+                }
             }
         }
         catch (error) {
@@ -134,14 +149,20 @@ class EC2ResourceGetter extends ResourceGetter {
         console.log(chalk_1.default.yellow('\nGetting all Instances...\n'));
         try {
             for (let region of this.regions) {
-                const ec2 = this.clients[region];
-                const pager = (0, client_ec2_1.paginateDescribeInstances)({ client: ec2 }, {});
-                let _instances = [];
-                for await (const page of pager) {
-                    _instances = _instances.concat(page.Reservations.map(reservation => reservation.Instances));
+                try {
+                    const ec2 = this.clients[region];
+                    const pager = (0, client_ec2_1.paginateDescribeInstances)({ client: ec2 }, {});
+                    let _instances = [];
+                    for await (const page of pager) {
+                        _instances = _instances.concat(page.Reservations.map(reservation => reservation.Instances));
+                    }
+                    regionInstancesMap[region] = _instances.flat();
+                    instances = instances.concat(..._instances);
                 }
-                regionInstancesMap[region] = _instances.flat();
-                instances = instances.concat(..._instances);
+                catch (error) {
+                    console.error(chalk_1.default.red(`Error while getting EC2 instances for region ${region}`));
+                    console.error(chalk_1.default.red(error));
+                }
             }
         }
         catch (error) {
@@ -162,17 +183,24 @@ class EC2ResourceGetter extends ResourceGetter {
         console.log(chalk_1.default.yellow('\nGetting all Nat Gateways...\n'));
         try {
             for (let region of this.regions) {
-                const ec2 = this.clients[region];
-                const pager = (0, client_ec2_1.paginateDescribeNatGateways)({ client: ec2 }, {});
-                let _natGateways = [];
-                for await (const page of pager) {
-                    _natGateways = _natGateways.concat(page.NatGateways);
+                try {
+                    const ec2 = this.clients[region];
+                    const pager = (0, client_ec2_1.paginateDescribeNatGateways)({ client: ec2 }, {});
+                    let _natGateways = [];
+                    for await (const page of pager) {
+                        _natGateways = _natGateways.concat(page.NatGateways);
+                    }
+                    regionNatGatewaysMap[region] = _natGateways;
+                    natGateways = natGateways.concat(..._natGateways);
                 }
-                regionNatGatewaysMap[region] = _natGateways;
-                natGateways = natGateways.concat(..._natGateways);
+                catch (error) {
+                    console.error(chalk_1.default.red(`Error while getting RDS resources for region ${region}`));
+                    console.error(chalk_1.default.red(error));
+                }
             }
         }
         catch (error) {
+            console.error(chalk_1.default.red(`Error while getting NAT gateways`));
             console.error(chalk_1.default.red(error));
         }
         finally {
@@ -225,15 +253,16 @@ class S3ResourceGetter extends ResourceGetter {
                     }
                 }
                 catch (error) {
-                    console.error(error);
+                    console.error(chalk_1.default.red(`Error while getting bucket location for ${bucket.Name}`));
+                    console.error(chalk_1.default.red(error));
                 }
                 buckets.push(bucket);
             }
             Object.keys(regionBucketsMap)
                 .forEach(region => {
-                console.log(chalk_1.default.green(`Total buckets in ${region}: ${regionBucketsMap[region].length}`));
+                console.log(chalk_1.default.green(`Total buckets in ${region}: ${regionBucketsMap[region].length} `));
             });
-            console.log(chalk_1.default.green(`Total buckets: ${buckets.length}`));
+            console.log(chalk_1.default.green(`Total buckets: ${buckets.length} `));
         }
         catch (error) {
             console.error(chalk_1.default.red(error));
@@ -264,16 +293,22 @@ class LambdaResourceGetter extends ResourceGetter {
         let functions = [];
         let regionMap = {};
         for (let region of this.regions) {
-            let _functions = [];
-            for await (const page of paginator) {
-                functions.push(...page.Functions);
-                _functions.push(...page.Functions);
+            try {
+                let _functions = [];
+                for await (const page of paginator) {
+                    functions.push(...page.Functions);
+                    _functions.push(...page.Functions);
+                }
+                regionMap[region] = _functions;
             }
-            regionMap[region] = _functions;
+            catch (error) {
+                console.error(chalk_1.default.red(`Error while getting lambda functions for region ${region}`));
+                console.error(chalk_1.default.red(error));
+            }
         }
         Object.keys(regionMap)
             .forEach(region => {
-            console.log(chalk_1.default.green(`Total functions in ${region}: ${regionMap[region].length}`));
+            console.log(chalk_1.default.green(`Total functions in ${region}: ${regionMap[region].length} `));
         });
         return {
             all: functions,
@@ -304,22 +339,28 @@ class DynamoDbResourceGetter extends ResourceGetter {
         for (let region of this.regions) {
             let _tables = [];
             const client = this.clients[region];
-            for await (const page of paginator) {
-                for (let i = 0; i < page.TableNames.length; i++) {
-                    let t = page.TableNames[i];
-                    let cmd = new client_dynamodb_1.DescribeTableCommand({
-                        TableName: t
-                    });
-                    let res = await client.send(cmd);
-                    tables.push(res.Table);
-                    _tables.push(res.Table);
+            try {
+                for await (const page of paginator) {
+                    for (let i = 0; i < page.TableNames.length; i++) {
+                        let t = page.TableNames[i];
+                        let cmd = new client_dynamodb_1.DescribeTableCommand({
+                            TableName: t
+                        });
+                        let res = await client.send(cmd);
+                        tables.push(res.Table);
+                        _tables.push(res.Table);
+                    }
                 }
+                regionMap[region] = _tables;
             }
-            regionMap[region] = _tables;
+            catch (error) {
+                console.error(chalk_1.default.red(`Error while getting DYNAMO DB tables for region ${region}`));
+                console.error(chalk_1.default.red(error));
+            }
         }
         Object.keys(regionMap)
             .forEach(region => {
-            console.log(chalk_1.default.green(`Total functions in ${region}: ${regionMap[region].length}`));
+            console.log(chalk_1.default.green(`Total functions in ${region}: ${regionMap[region].length} `));
         });
         return {
             all: tables,
@@ -331,7 +372,9 @@ class DynamoDbResourceGetter extends ResourceGetter {
 exports.DynamoDbResourceGetter = DynamoDbResourceGetter;
 class RDSResourceGetter extends ResourceGetter {
     constructor(profile, regions) {
-        super(profile, regions, client_rds_1.RDSClient);
+        super(profile, regions, client_rds_1.RDSClient, (region) => {
+            return `https://rds.${region}.amazonaws.com`;
+        });
         this.profile = profile;
         this.regions = regions;
     }
@@ -346,15 +389,21 @@ class RDSResourceGetter extends ResourceGetter {
         let regionMap = {};
         for (let region of this.regions) {
             const client = this.clients[region];
-            const paginator = (0, client_rds_1.paginateDescribeDBInstances)({
-                client: client
-            }, {});
-            const _instances = [];
-            for await (const page of paginator) {
-                instances.push(...page.DBInstances);
-                _instances.push(...page.DBInstances);
+            try {
+                const paginator = (0, client_rds_1.paginateDescribeDBInstances)({
+                    client: client
+                }, {});
+                const _instances = [];
+                for await (const page of paginator) {
+                    instances.push(...page.DBInstances);
+                    _instances.push(...page.DBInstances);
+                }
+                regionMap[region] = _instances;
             }
-            regionMap[region] = _instances;
+            catch (error) {
+                console.error(chalk_1.default.red(`Error while getting RDS resources for region ${region}`));
+                console.error(chalk_1.default.red(error));
+            }
         }
         return {
             all: instances,

@@ -166,6 +166,7 @@ const analyzeResourceAndPoliciesForRole = async (policies, profile, regions, rol
             type: 'role',
             roleName: role.RoleName,
             roleId: role.RoleId,
+            policies: policies
         }));
         return generateResourceTree(policies, profile, regions, mainTree, allResources);
     }
@@ -192,6 +193,7 @@ const analyzeResourceAndPoliciesForUser = async (policies, profile, regions, use
             type: 'user',
             userName: user.UserName,
             userId: user.UserId,
+            policies: policies
         }));
         return await generateResourceTree(policies, profile, regions, mainTree, allResources);
     }
@@ -219,7 +221,7 @@ const analyzeResourceAndPoliciesForUser = async (policies, profile, regions, use
  */
 const generateResourceTree = async (policies, profile, regions, mainTree, allResources) => {
     console.log(chalk_1.default.yellow('Analyzing Resources and policies'));
-    console.log(chalk_1.default.yellow('This will create a resource structure tree for the current user'));
+    console.log(chalk_1.default.yellow('This will create a resource structure tree'));
     let statements = [];
     let isAdmin = false;
     // Get all the statements from all the policies

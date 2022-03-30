@@ -69,7 +69,7 @@ class IamService {
             let policyDocs = [];
             for (let i = 0; i < policies.length; i++) {
                 let doc = await this.getPolicyDocument(policies[i].PolicyArn);
-                policyDocs.push({ Name: policies[i].PolicyName, Document: doc, Arn: policies[i].PolicyArn });
+                policyDocs.push({ PolicyName: policies[i].PolicyName, Document: doc, PolicyArn: policies[i].PolicyArn });
             }
             return policyDocs;
         }
@@ -100,7 +100,7 @@ class IamService {
                 let response = await this.client.send(cmd);
                 let doc = response.PolicyDocument;
                 let policyDocument = {
-                    Name: _policy,
+                    PolicyName: _policy,
                     Document: doc
                 };
                 policyDocuments.push(policyDocument);

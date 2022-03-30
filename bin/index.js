@@ -84,7 +84,6 @@ function processArgs() {
 }
 async function runResources(args) {
     try {
-        console.log(args);
         const _regions = await _processRegions(args);
         console.log(chalk_1.default.yellow(`Analyzing resources in regions: ${_regions}`));
         //Run resource analyzer

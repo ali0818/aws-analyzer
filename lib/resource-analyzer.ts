@@ -8,7 +8,7 @@ import { getActions } from "./actions-list";
 import { ADMIN_POLICY } from "./constants/policies";
 import { ARN_REGEX } from "./constants/regex";
 import { cacheExists, loadCache, saveCache } from "./files";
-import { IamService } from "./iam.service";
+import { IamService, PolicyWithDocument } from "./iam.service";
 import { analyzeDynamodbResources } from "./resource-analyzers/dynamodb-resource.analyzer";
 import { analyzeEC2Resources } from "./resource-analyzers/ec2-resource.analyzer";
 import { analyzerLambdaResources } from "./resource-analyzers/lambda-resource.analyzer";
@@ -85,7 +85,7 @@ export async function analyzeResources(profile: string, regions: string[], refre
             try {
                 const user = users[i];
 
-                const policies = await iamClient.listAllPoliciesForUser(user);
+                const policies: PolicyWithDocument[] = await iamClient.listAllPoliciesForUser(user);
 
                 if (!userDetails[user.UserId]) {
                     userDetails[user.UserId] = {};
@@ -210,7 +210,7 @@ const initializeRegionalResourceTaggingClients = (profile: string, regions: stri
  * @param allResources All resources in all regions
  * @returns 
  */
-export const analyzeResourceAndPoliciesForRole = async (policies, profile: string, regions: string[], role: Role, allResources: AllResources): Promise<Tree> => {
+export const analyzeResourceAndPoliciesForRole = async (policies: PolicyWithDocument[], profile: string, regions: string[], role: Role, allResources: AllResources): Promise<Tree> => {
     try {
         console.log(chalk.yellow('Analyzing Resources and policies for role'));
         console.log(chalk.yellow('This will create a resource structure tree for the current role'));
@@ -219,6 +219,7 @@ export const analyzeResourceAndPoliciesForRole = async (policies, profile: strin
             type: 'role',
             roleName: role.RoleName,
             roleId: role.RoleId,
+            policies: policies
         }));
 
         return generateResourceTree(policies, profile, regions, mainTree, allResources);
@@ -237,7 +238,7 @@ export const analyzeResourceAndPoliciesForRole = async (policies, profile: strin
  * @param allResources All resource available in all regions
  * @returns 
  */
-const analyzeResourceAndPoliciesForUser = async (policies, profile: string, regions: string[], user: User, allResources: AllResources): Promise<Tree> => {
+const analyzeResourceAndPoliciesForUser = async (policies: PolicyWithDocument[], profile: string, regions: string[], user: User, allResources: AllResources): Promise<Tree> => {
     console.log(chalk.yellow('Analyzing Resources and policies for user'));
     console.log(chalk.yellow('This will create a resource structure tree for the current user'));
     try {
@@ -245,6 +246,7 @@ const analyzeResourceAndPoliciesForUser = async (policies, profile: string, regi
             type: 'user',
             userName: user.UserName,
             userId: user.UserId,
+            policies: policies
         }));
 
         return await generateResourceTree(policies, profile, regions, mainTree, allResources);
@@ -274,7 +276,7 @@ const analyzeResourceAndPoliciesForUser = async (policies, profile: string, regi
  */
 const generateResourceTree = async (policies, profile: string, regions: string[], mainTree: Tree, allResources: AllResources): Promise<Tree> => {
     console.log(chalk.yellow('Analyzing Resources and policies'));
-    console.log(chalk.yellow('This will create a resource structure tree for the current user'));
+    console.log(chalk.yellow('This will create a resource structure tree'));
     let statements: any[] = [];
 
     let isAdmin = false;
